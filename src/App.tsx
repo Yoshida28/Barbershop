@@ -11,6 +11,8 @@ import Services from './pages/services';
 import Products from './pages/products';
 import Gallery from './pages/gallery';
 import Contact from './pages/contact';
+import ServiceDetail from './pages/service-detail';
+import Locations from './pages/locations';
 
 function App() {
   return (
@@ -20,8 +22,10 @@ function App() {
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
           <Route path="services" element={<Services />} />
+          <Route path="services/:id" element={<ServiceDetail />} />
           <Route path="products" element={<Products />} />
           <Route path="gallery" element={<Gallery />} />
+          <Route path="locations" element={<Locations />} />
           <Route path="contact" element={<Contact />} />
         </Route>
       </Routes>

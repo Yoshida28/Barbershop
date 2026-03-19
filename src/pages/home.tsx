@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   Instagram, Facebook, Twitter, Phone, Mail, MapPin, 
   ChevronRight, ArrowRight, Scissors, Award, Star
 } from 'lucide-react';
-import { MinimalistHero } from '../components/ui/minimalist-hero';
+import { HeroSection } from '../components/blocks/hero-section-5';
+import ElegantCarousel from '../components/ui/elegant-carousel';
+import { SmokeBackground } from '../components/ui/spooky-smoke-animation';
 
 // --- Types ---
 interface Service {
@@ -164,9 +167,9 @@ const Services = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-white/5 border border-white/10 border-solid">
           {filteredServices.length > 0 ? (
             filteredServices.map((service, idx) => (
-              <motion.div 
-                key={service.title}
-                initial={{ opacity: 0 }}
+              <Link to={`/services/${service.title.toLowerCase().replace(/\\s+/g, '-')}`} key={service.title} className="block">
+                <motion.div 
+                  initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.1 }}
@@ -185,6 +188,7 @@ const Services = () => {
                   <p className="text-xl font-display">{service.price}</p>
                 </div>
               </motion.div>
+              </Link>
             ))
           ) : (
             <div className="col-span-full py-20 text-center bg-primary-bg-bg">
@@ -502,21 +506,20 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen selection:bg-primary-bg selection:text-heading-text">
-      <MinimalistHero 
-        logoText="VANGUARD"
-        navLinks={navLinks}
-        mainText="Vanguard is more than a barbershop; it's a sanctuary for the modern gentleman. We combine centuries-old traditions with contemporary techniques."
-        readMoreLink="#about"
-        imageSrc="https://images.pexels.com/photos/1319459/pexels-photo-1319459.jpeg?auto=compress&cs=tinysrgb&w=800"
-        imageAlt="Vanguard Grooming"
-        overlayText={{
-          part1: "VANGUARD",
-          part2: "GROOMING"
-        }}
-        socialLinks={socialLinks}
-        locationText="LONDON, UK"
-      />
+    <div className="min-h-screen selection:bg-primary-bg selection:text-heading-text relative">
+      <div className="fixed inset-0 pointer-events-none" style={{ zIndex: -10 }}>
+        <SmokeBackground smokeColor="#262626" />
+      </div>
+      <div className="relative z-10">
+      <div className="relative z-10 -mt-24 md:mt-0">
+        <HeroSection />
+      </div>
+      
+      {/* Elegant Carousel section moved from Gallery with significant padding */}
+      <div className="py-24 md:py-32 bg-background relative z-10 border-t border-b border-white/5">
+        <ElegantCarousel />
+      </div>
+      
       <OnePager />
       <AboutVisionMission />
       <Services />
@@ -526,6 +529,7 @@ export default function Home() {
       <MediaCenter />
       <FranchiseForm />
       <ContactUs />
+      </div>
     </div>
   );
 }

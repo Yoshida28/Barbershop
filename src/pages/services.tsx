@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { Scissors, Award, Star, ArrowRight } from 'lucide-react';
 
 interface Service {
@@ -66,8 +67,8 @@ export default function Services() {
         <motion.div layout className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-32">
           <AnimatePresence>
             {filteredServices.map((service, index) => (
-              <motion.div
-                 key={service.title}
+              <Link to={`/services/${service.title.toLowerCase().replace(/\\s+/g, '-')}`} key={service.title} className="block">
+                <motion.div
                  layout
                  initial={{ opacity: 0, scale: 0.9 }}
                  animate={{ opacity: 1, scale: 1 }}
@@ -96,6 +97,7 @@ export default function Services() {
                      </div>
                   </div>
               </motion.div>
+              </Link>
             ))}
           </AnimatePresence>
         </motion.div>

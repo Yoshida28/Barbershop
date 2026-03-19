@@ -1,77 +1,103 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { PhotoGallery } from '../components/ui/gallery';
+import { ShuffleHero } from '../components/ui/shuffle-grid';
+import { ArcGalleryHero } from '../components/ui/arc-gallery-hero-component';
+import ClippedShapeGallery from '../components/ui/clipped-shape-image';
 import { motion } from 'framer-motion';
-import { Instagram, ArrowUpRight } from 'lucide-react';
 
-const GALLERY_IMAGES = [
-  "https://images.pexels.com/photos/1570806/pexels-photo-1570806.jpeg?auto=compress&cs=tinysrgb&w=800",
-  "https://images.pexels.com/photos/3998429/pexels-photo-3998429.jpeg?auto=compress&cs=tinysrgb&w=800",
-  "https://images.unsplash.com/photo-1593726850403-2add1a2380f9?q=80&w=800&auto=format&fit=crop",
-  "https://images.pexels.com/photos/1319459/pexels-photo-1319459.jpeg?auto=compress&cs=tinysrgb&w=800",
-  "https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=800",
-  "https://images.pexels.com/photos/2080006/pexels-photo-2080006.jpeg?auto=compress&cs=tinysrgb&w=800",
-  "https://images.pexels.com/photos/2040050/pexels-photo-2040050.jpeg?auto=compress&cs=tinysrgb&w=800",
-  "https://images.unsplash.com/photo-1554519934-e32b1629d9ee?q=80&w=800&auto=format&fit=crop"
+const memoryImages = [
+  'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80&w=600&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=600&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1621605815971-8bcaf47d6cb0?q=80&w=600&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=600&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1593702275687-f8b402bf1fb5?q=80&w=600&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1605497788044-5a32c707d30f?q=80&w=600&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1567894340315-735d7c361db0?q=80&w=600&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1534723452862-4c874018d66d?q=80&w=600&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1512690459411-b9245aed614b?q=80&w=600&auto=format&fit=crop',
 ];
 
-const SectionHeading = ({ title, subtitle }: { title: string; subtitle?: string }) => (
-  <div className="mb-20 text-center md:text-left flex flex-col md:flex-row md:items-end md:justify-between w-full">
-    <div>
-        {subtitle && (
-        <p className="text-xs uppercase tracking-[0.4em] mb-6 font-bold flex items-center justify-center md:justify-start gap-4 text-body-text">
-            <span className="w-8 h-[1px] block bg-neutral-300" />
-            {subtitle}
-        </p>
-        )}
-        <h2 className="text-5xl md:text-7xl leading-none uppercase tracking-tight text-heading-text">{title}</h2>
+// A modern horizontal scrolling carousel / marquee
+const InfiniteMarquee = () => {
+  return (
+    <div className="w-full relative py-20 bg-background overflow-hidden border-t border-white/5">
+      <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+      <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+      
+      <div className="flex flex-col gap-8">
+        <h3 className="text-center text-xs md:text-sm uppercase tracking-[0.4em] font-bold text-neutral-500 mb-8">
+          The Vanguard Archive
+        </h3>
+        
+        <div className="flex w-[200vw] sm:w-[150vw] md:w-[120vw] animate-marquee gap-6 items-center hover:[animation-play-state:paused] group">
+          {[...memoryImages, ...memoryImages].map((src, i) => (
+            <div 
+              key={i} 
+              className="flex-shrink-0 w-[280px] h-[350px] overflow-hidden rounded-sm relative cursor-pointer"
+            >
+              <img 
+                src={src} 
+                alt="Archive" 
+                className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 hover:!grayscale-0 hover:scale-110 transition-all duration-700"
+              />
+              <div className="absolute inset-0 bg-black/20 hover:bg-transparent transition-colors duration-500" />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes marquee {
+          0% { transform: translateX(0%); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+          animation: marquee 40s linear infinite;
+        }
+      `}</style>
     </div>
-    <a href="https://instagram.com" target="_blank" rel="noreferrer" className="hidden md:inline-flex items-center gap-2 px-6 py-3 border border-white/10 rounded-full hover:bg-white/5 hover:border-white/10 transition-all text-xs font-bold uppercase tracking-widest text-heading-text mt-6 md:mt-0">
-       <Instagram size={16} /> Follow Our Feed
-    </a>
-  </div>
-);
+  );
+};
 
 export default function Gallery() {
-  return (
-    <div className="w-full relative py-24 md:py-32 px-6">
-      <div className="max-w-7xl mx-auto">
-        <SectionHeading title="The Archives" subtitle="Gallery" />
-        
-        {/* Modern Masonry-style layout */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 auto-rows-max">
-          {GALLERY_IMAGES.map((src, i) => {
-             // Create organic varied heights for modern feel
-             const heights = ['h-64', 'h-96', 'h-80', 'h-112', 'h-72', 'h-96', 'h-112', 'h-64'];
-             const spanClasses = (i === 0 || i === 4) ? 'col-span-2' : 'col-span-1';
-             
-             return (
-              <motion.div 
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: i * 0.1 }}
-                className={`relative overflow-hidden group rounded-sm cursor-pointer ${heights[i % heights.length]} ${spanClasses}`}
-              >
-                <img 
-                  src={src} 
-                  alt={`Vanguard Gallery ${i+1}`} 
-                  className="w-full h-full object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000"
-                />
-                <div className="absolute inset-0 bg-primary-bg/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                   <div className="w-12 h-12 bg-primary-bg-bg rounded-full flex items-center justify-center text-heading-text scale-0 group-hover:scale-100 transition-transform duration-500 delay-100">
-                      <ArrowUpRight size={20} />
-                   </div>
-                </div>
-              </motion.div>
-             )
-          })}
-        </div>
+  const [heroIndex, setHeroIndex] = useState<number>(0);
+  const [mounted, setMounted] = useState(false);
 
-        <div className="mt-16 flex justify-center md:hidden">
-            <a href="https://instagram.com" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-6 py-3 border border-white/10 rounded-full hover:bg-white/5 transition-all text-xs font-bold uppercase tracking-widest text-heading-text">
-               <Instagram size={16} /> Follow Our Feed
-            </a>
+  useEffect(() => {
+    // Randomize on client mount to avoid hydration mismatch if SSR
+    setHeroIndex(Math.floor(Math.random() * 3));
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return <div className="min-h-screen bg-primary-bg-bg" />;
+
+  return (
+    <div className="min-h-screen bg-background relative flex flex-col justify-between overflow-x-hidden selection:bg-emerald-500/30">
+      {/* Universal Background for Gallery */}
+      <div className="fixed inset-0 z-0 bg-primary-bg-bg" />
+
+      {/* Frame for the entire UI */}
+      <div className="relative z-10 w-full flex-grow flex flex-col items-center">
+        
+        <div className="w-full min-h-[90vh]">
+          {heroIndex === 0 && <PhotoGallery animationDelay={0.2} />}
+          {heroIndex === 1 && <ShuffleHero />}
+          {heroIndex === 2 && <ArcGalleryHero images={memoryImages} />}
         </div>
+        
+        {/* Featured Snippets using Clipped Shapes */}
+        <div className="w-full py-24 bg-primary-bg-light/30 border-t border-white/5 relative">
+          <div className="max-w-7xl mx-auto flex flex-col items-center">
+            <h3 className="text-center text-xs md:text-sm uppercase tracking-[0.4em] font-bold text-emerald-500 mb-12">
+              Signature Styles
+            </h3>
+            <ClippedShapeGallery />
+          </div>
+        </div>
+        
+        {/* Modern horizontal carousel below the chosen hero */}
+        <InfiniteMarquee />
+        
       </div>
     </div>
   );
