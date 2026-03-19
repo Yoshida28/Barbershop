@@ -1,12 +1,30 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Shantel+Sans:wght@300..800&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-display: "Bebas Neue", sans-serif;
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "HK Moulder", "The Seasons", "Bebas Neue", serif;
+  --font-sans: "Shantel Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
   
-  --color-primary: #151515;
-  --color-secondary: #f2f1f0;
+  /* User Requested Colors */
+  --color-primary-bg: #1F1B1C;
+  --color-secondary-bg: #2A2627;
+  --color-heading-text: #EAE6E5;
+  --color-body-text: #CFCACA;
+  --color-muted-text: #A9A4A3;
+  --color-light-bg: #F5F3F2;
+
+  /* Map to Tailwind default concepts for backward compatibility */
+  --color-primary: var(--color-heading-text);
+  --color-primary-foreground: var(--color-primary-bg);
+  --color-secondary: var(--color-secondary-bg);
+  --color-secondary-foreground: var(--color-body-text);
+  --color-background: var(--color-primary-bg);
+  --color-foreground: var(--color-body-text);
+  --color-muted: var(--color-secondary-bg);
+  --color-muted-foreground: var(--color-muted-text);
+  
+  /* Safely mapped backward compatible colors */
+
 }
 
 @layer base {
@@ -14,10 +32,10 @@
     scroll-behavior: smooth;
   }
   body {
-    @apply bg-white text-primary font-sans antialiased;
+    @apply bg-primary-bg text-body-text font-sans antialiased;
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display uppercase tracking-wider;
+    @apply font-display text-heading-text uppercase tracking-wider;
   }
 }
 

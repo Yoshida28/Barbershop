@@ -68,8 +68,8 @@ export function FeatureSteps({
                   className={cn(
                     "w-10 h-10 rounded-full flex items-center justify-center border-2 shrink-0 transition-all duration-500",
                     index === currentFeature
-                      ? "bg-primary border-primary text-white scale-110 shadow-lg shadow-primary/20"
-                      : "bg-transparent border-neutral-300 group-hover:border-primary",
+                      ? "bg-primary-bg border-primary text-heading-text scale-110 shadow-lg shadow-primary/20"
+                      : "bg-transparent border-white/10 group-hover:border-primary",
                   )}
                 >
                   {index < currentFeature ? (
@@ -83,15 +83,15 @@ export function FeatureSteps({
                   <h3 className="text-2xl md:text-3xl font-display uppercase mb-3 tracking-wide">
                     {feature.title || feature.step}
                   </h3>
-                  <p className="text-sm md:text-lg text-neutral-500 font-sans leading-relaxed">
+                  <p className="text-sm md:text-lg text-body-text font-sans leading-relaxed">
                     {feature.content}
                   </p>
                   
                   {/* Progress bar for the active item */}
                   {index === currentFeature && (
-                    <div className="mt-4 h-1 w-full bg-neutral-100 rounded-full overflow-hidden">
+                    <div className="mt-4 h-1 w-full bg-white/5 rounded-full overflow-hidden">
                       <motion.div 
-                        className="h-full bg-primary"
+                        className="h-full bg-primary-bg"
                         initial={{ width: 0 }}
                         animate={{ width: `${progress}%` }}
                         transition={{ ease: "linear" }}
@@ -105,7 +105,7 @@ export function FeatureSteps({
 
           <div
             className={cn(
-              "order-1 md:order-2 relative overflow-hidden rounded-sm bg-neutral-100",
+              "order-1 md:order-2 relative overflow-hidden rounded-sm bg-white/5",
               imageHeight
             )}
           >

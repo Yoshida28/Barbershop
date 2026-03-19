@@ -52,7 +52,7 @@ export const Slideshow = () => {
               {slide.text.map((t, j) => (
                 <span 
                   key={j} 
-                  className="block text-5xl md:text-8xl lg:text-9xl font-extrabold text-white tracking-tighter uppercase leading-none drop-shadow-2xl"
+                  className="block text-5xl md:text-8xl lg:text-9xl font-extrabold text-heading-text tracking-tighter uppercase leading-none drop-shadow-2xl"
                 >
                   {t}
                 </span>
@@ -64,14 +64,14 @@ export const Slideshow = () => {
 
       {/* Controls */}
       <button 
-        className="nav absolute left-8 top-1/2 -translate-y-1/2 z-20 text-white opacity-50 hover:opacity-100 transition-opacity p-2 border border-white/20 rounded-full" 
+        className="nav absolute left-8 top-1/2 -translate-y-1/2 z-20 text-heading-text opacity-50 hover:opacity-100 transition-opacity p-2 border border-white/20 rounded-full" 
         onClick={prevSlide}
         aria-label="Previous slide"
       >
         <ChevronLeft size={32} />
       </button>
       <button 
-        className="nav absolute right-8 top-1/2 -translate-y-1/2 z-20 text-white opacity-50 hover:opacity-100 transition-opacity p-2 border border-white/20 rounded-full" 
+        className="nav absolute right-8 top-1/2 -translate-y-1/2 z-20 text-heading-text opacity-50 hover:opacity-100 transition-opacity p-2 border border-white/20 rounded-full" 
         onClick={nextSlide}
         aria-label="Next slide"
       >
@@ -79,14 +79,14 @@ export const Slideshow = () => {
       </button>
 
       {/* Counter */}
-      <div className="counter absolute bottom-12 right-12 z-20 text-white font-mono text-sm tracking-widest opacity-70">
+      <div className="counter absolute bottom-12 right-12 z-20 text-heading-text font-mono text-sm tracking-widest opacity-70">
         0{current + 1} / 0{slides.length}
       </div>
 
       {/* Progress Bar (Optional, for visual flair) */}
-      <div className="absolute bottom-0 left-0 h-1 bg-white/20 w-full z-20">
+      <div className="absolute bottom-0 left-0 h-1 bg-primary-bg-bg/20 w-full z-20">
         <div 
-          className="h-full bg-white transition-all duration-300 ease-linear" 
+          className="h-full bg-primary-bg-bg transition-all duration-300 ease-linear" 
           style={{ width: `${((current + 1) / slides.length) * 100}%` }}
         />
       </div>
