@@ -324,57 +324,38 @@ const Gallery = () => (
   </section>
 );
 
+import { FeatureSteps } from '../components/ui/feature-section';
+
+const MEDIA_FEATURES = [
+  { 
+    step: 'Oct 12, 2025', 
+    title: 'New London Flagship',
+    content: 'Vanguard opens its most ambitious location yet on Savile Row, bridging the gap between traditional tailoring and modern grooming.', 
+    image: 'https://images.unsplash.com/photo-1510172951991-8560654063f9?q=80&w=2000&auto=format&fit=crop' 
+  },
+  { 
+    step: 'Sep 05, 2025',
+    title: 'The Evolution of Craft',
+    content: 'A deep dive into how our master barbers are evolving centuries-old techniques for the 21st-century gentleman.',
+    image: 'https://images.unsplash.com/photo-1599351473219-283b9481d83d?q=80&w=2000&auto=format&fit=crop'
+  },
+  { 
+    step: 'Aug 20, 2025',
+    title: 'Partnership with Baxter',
+    content: 'Vanguard is proud to announce an exclusive partnership with Baxter of California, bringing luxury apothecary to all locations.',
+    image: 'https://images.unsplash.com/photo-1626285861696-9f0bf5a49c6d?q=80&w=2000&auto=format&fit=crop'
+  },
+];
+
 const MediaCenter = () => {
-  const [activeTab, setActiveTab] = useState<'Public' | 'Partners' | 'Media'>('Public');
-
-  const content = {
-    Public: [
-      { date: 'Oct 12, 2025', title: 'Vanguard Opens New Flagship in London' },
-      { date: 'Sep 05, 2025', title: 'The Evolution of Modern Barbering' },
-    ],
-    Partners: [
-      { date: 'Nov 01, 2025', title: 'Exclusive Partnership with Baxter of California' },
-      { date: 'Aug 20, 2025', title: 'Supply Chain Sustainability Report' },
-    ],
-    Media: [
-      { date: 'Dec 20, 2025', title: 'Press Kit 2026 Now Available' },
-      { date: 'Jul 15, 2025', title: 'High-Res Brand Assets for Editorial Use' },
-    ]
-  };
-
   return (
-    <section className="py-24 px-6 bg-secondary">
-      <div className="max-w-4xl mx-auto">
-        <SectionHeading title="Media Center" subtitle="News & Updates" />
-        
-        <div className="flex gap-8 border-b border-neutral-300 border-solid mb-12">
-          {['Public', 'Partners', 'Media'].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab as any)}
-              className={`pb-4 text-[10px] uppercase tracking-widest font-bold transition-all relative ${activeTab === tab ? 'text-primary' : 'text-neutral-400 hover:text-primary'}`}
-            >
-              {tab}
-              {activeTab === tab && <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 w-full h-[2px] bg-primary" />}
-            </button>
-          ))}
-        </div>
-
-        <div className="space-y-8">
-          {content[activeTab].map((item, idx) => (
-            <motion.div 
-              key={idx}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="flex flex-col md:flex-row md:items-center gap-4 md:gap-12 group cursor-pointer"
-            >
-              <span className="text-[10px] uppercase tracking-widest text-neutral-400 w-32">{item.date}</span>
-              <h4 className="text-2xl flex-1 group-hover:translate-x-2 transition-transform font-display uppercase">{item.title}</h4>
-              <ChevronRight size={20} className="text-neutral-300 group-hover:text-primary transition-colors" />
-            </motion.div>
-          ))}
-        </div>
-      </div>
+    <section className="py-24 bg-secondary">
+      <FeatureSteps 
+        features={MEDIA_FEATURES}
+        title="Media Center"
+        autoPlayInterval={5000}
+        imageHeight="h-[600px]"
+      />
     </section>
   );
 };
