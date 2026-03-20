@@ -8,6 +8,9 @@ import { cn } from '../../lib/utils'
 import { Menu, X, ChevronRight, Scissors, Star, Shield, Award, Crown, Sparkles } from 'lucide-react'
 import { useScroll, motion } from 'framer-motion' // Changed from motion/react
 
+const HERO_VIDEO_START = 13
+const HERO_VIDEO_END = 60
+
 export function HeroSection() {
     return (
         <>
@@ -19,39 +22,34 @@ export function HeroSection() {
                                 <h1 className="mt-8 max-w-3xl text-balance text-5xl md:text-6xl lg:mt-16 xl:text-7xl font-display uppercase tracking-widest text-heading-text">
                                   Elevate Your Style at <span className="text-white italic block mt-2">Vanguard</span>
                                 </h1>
-                                <p className="mt-8 max-w-2xl text-balance text-lg text-neutral-400 tracking-wider">
-                                  Experience the pinnacle of traditional barbering melded with modern artistry. Our master barbers are dedicated to precision, offering bespoke grooming services.
-                                </p>
 
                                 <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row lg:justify-start">
-                                    <Button
-                                        asChild
-                                        size="lg"
-                                        className="h-14 rounded-full pl-6 pr-4 text-base font-bold uppercase tracking-[0.2em] bg-white text-black hover:bg-zinc-200">
-                                        <Link to="/services">
-                                            <span className="text-nowrap mt-[2px]">View Services</span>
-                                            <ChevronRight className="ml-2 w-5 h-5" />
-                                        </Link>
-                                    </Button>
-                                    <Button
-                                        asChild
-                                        size="lg"
-                                        variant="outline"
-                                        className="h-14 rounded-full px-8 text-base font-bold uppercase tracking-[0.2em] border-white/20 hover:bg-white/10 hover:text-white bg-transparent">
-                                        <Link to="/gallery">
-                                            <span className="text-nowrap mt-[2px]">Our Masterpieces</span>
-                                        </Link>
-                                    </Button>
+                                    
                                 </div>
                             </div>
                         </div>
                         <div className="aspect-[4/5] absolute inset-1 overflow-hidden rounded-3xl border border-white/10 md:aspect-video lg:rounded-[3rem] top-32 -z-10 bg-black">
-                            <img
-                                className="size-full object-cover opacity-30 mix-blend-screen scale-105"
-                                src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=1600&q=80"
-                                alt="Barbershop"
-                            />
-                            {/* Dark gradient overlay so text is readable */}
+                            <video
+                                className="size-full object-cover opacity-55 scale-105"
+                                autoPlay
+                                muted
+                                playsInline
+                                preload="auto"
+                                aria-label="Barbershop cinematic background"
+                                onLoadedMetadata={(event) => {
+                                    event.currentTarget.currentTime = HERO_VIDEO_START
+                                }}
+                                onTimeUpdate={(event) => {
+                                    if (event.currentTarget.currentTime >= HERO_VIDEO_END) {
+                                        event.currentTarget.currentTime = HERO_VIDEO_START
+                                        void event.currentTarget.play()
+                                    }
+                                }}
+                            >
+                                <source src="/src/public/herovideo.mp4" type="video/mp4" />
+                            </video>
+                            {/* Vignette + directional gradient keep hero copy readable */}
+                            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(0,0,0,0.55)_100%)]"></div>
                             <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent"></div>
                         </div>
                     </div>

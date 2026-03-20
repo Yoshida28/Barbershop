@@ -5,13 +5,13 @@
   --font-display: "HK Moulder", "The Seasons", "Bebas Neue", serif;
   --font-sans: "Shantel Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
   
-  /* User Requested Colors */
-  --color-primary-bg: #1F1B1C;
-  --color-secondary-bg: #2A2627;
-  --color-heading-text: #EAE6E5;
-  --color-body-text: #CFCACA;
-  --color-muted-text: #A9A4A3;
-  --color-light-bg: #F5F3F2;
+  /* Black + dark gold palette */
+  --color-primary-bg: #0b0a08;
+  --color-secondary-bg: #18140f;
+  --color-heading-text: #c4a15a;
+  --color-body-text: #a88a4e;
+  --color-muted-text: #7f6738;
+  --color-light-bg: #221c14;
 
   /* Map to Tailwind default concepts for backward compatibility */
   --color-primary: var(--color-heading-text);
@@ -45,18 +45,18 @@
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #ffffff;
+  background: #0b0a08;
 }
 ::-webkit-scrollbar-thumb {
-  background: #151515;
+  background: #6f562a;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #333333;
+  background: #93713a;
 }
 
 /* Custom Styles for Slideshow */
 .slideshow {
-  background-color: #000;
+  background-color: #0b0a08;
 }
 
 .slide-text span {
