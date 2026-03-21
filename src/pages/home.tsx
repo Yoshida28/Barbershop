@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { Link, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Instagram, Facebook, Twitter, Phone, Mail, MapPin, 
   ChevronRight, ArrowRight, Scissors, Award, Star
@@ -8,6 +8,7 @@ import {
 import { HeroSection } from '../components/blocks/hero-section-5';
 import ElegantCarousel from '../components/ui/elegant-carousel';
 import { SmokeBackground } from '../components/ui/spooky-smoke-animation';
+import { ImageAutoSlider } from '../components/ui/image-auto-slider';
 
 // --- Types ---
 interface Service {
@@ -65,28 +66,29 @@ const SectionHeading = ({ title, subtitle }: { title: string; subtitle?: string 
 );
 
 const OnePager = () => (
-  <section className="py-24 px-6 bg-secondary-bg">
-    <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
-      <div className="aspect-[4/5] overflow-hidden">
+  <section className="py-16 md:py-24 px-5 md:px-6 bg-secondary-bg">
+    <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
+      <div className="aspect-[4/3] md:aspect-[4/5] overflow-hidden rounded-xl">
         <img 
           src="https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=800"
           alt="Barber at work" 
-          className="w-full h-full object-cover grayscale"
+          className="w-full h-full object-cover"
+          style={{ filter: 'contrast(1.12) brightness(1.06) saturate(1.1)' }}
           referrerPolicy="no-referrer"
         />
       </div>
-      <div>
+      <div className="py-4">
         <SectionHeading title="The Art of the Cut" subtitle="Introduction" />
-        <p className="text-lg leading-relaxed text-body-text mb-8">
+        <p className="text-base md:text-lg leading-relaxed text-body-text mb-8">
           Vanguard is more than a barbershop; it's a sanctuary for the modern gentleman. We combine centuries-old traditions with contemporary techniques to deliver an unparalleled grooming experience.
         </p>
-        <div className="grid grid-cols-2 gap-8">
+        <div className="grid grid-cols-2 gap-6 md:gap-8">
           <div>
-            <h4 className="text-2xl mb-2 font-display uppercase">15+ Years</h4>
+            <h4 className="text-xl md:text-2xl mb-2 font-display uppercase">15+ Years</h4>
             <p className="text-xs uppercase text-muted-text">Of Excellence</p>
           </div>
           <div>
-            <h4 className="text-2xl mb-2 font-display uppercase">24/7</h4>
+            <h4 className="text-xl md:text-2xl mb-2 font-display uppercase">24/7</h4>
             <p className="text-xs uppercase text-muted-text">Booking Available</p>
           </div>
         </div>
@@ -96,17 +98,17 @@ const OnePager = () => (
 );
 
 const AboutVisionMission = () => (
-  <section id="about" className="py-24 px-6 bg-primary-bg-bg">
+  <section id="about" className="py-16 md:py-24 px-5 md:px-6 bg-primary-bg-bg">
     <div className="max-w-7xl mx-auto">
-      <div className="grid md:grid-cols-3 gap-16">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-16">
         <motion.div 
           whileInView={{ opacity: 1, y: 0 }}
           initial={{ opacity: 0, y: 30 }}
           viewport={{ once: true }}
-          className="space-y-6"
+          className="space-y-4 md:space-y-6"
         >
-          <h3 className="text-4xl font-display uppercase">About Us</h3>
-          <p className="text-body-text leading-relaxed font-sans">
+          <h3 className="text-3xl md:text-4xl font-display uppercase">About Us</h3>
+          <p className="text-body-text leading-relaxed font-sans text-sm md:text-base">
             Founded in the heart of the city, Vanguard was born from a desire to return to the roots of masculine grooming. Our master barbers are artists, dedicated to the precision and detail that defines a true gentleman.
           </p>
         </motion.div>
@@ -115,10 +117,10 @@ const AboutVisionMission = () => (
           initial={{ opacity: 0, y: 30 }}
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
-          className="space-y-6"
+          className="space-y-4 md:space-y-6"
         >
-          <h3 className="text-4xl font-display uppercase">Our Vision</h3>
-          <p className="text-body-text leading-relaxed font-sans">
+          <h3 className="text-3xl md:text-4xl font-display uppercase">Our Vision</h3>
+          <p className="text-body-text leading-relaxed font-sans text-sm md:text-base">
             To redefine the standard of men's grooming globally, creating a space where style, comfort, and tradition coexist in perfect harmony. We aim to be the benchmark for luxury barbering.
           </p>
         </motion.div>
@@ -127,10 +129,10 @@ const AboutVisionMission = () => (
           initial={{ opacity: 0, y: 30 }}
           viewport={{ once: true }}
           transition={{ delay: 0.4 }}
-          className="space-y-6"
+          className="space-y-4 md:space-y-6"
         >
-          <h3 className="text-4xl font-display uppercase">Our Mission</h3>
-          <p className="text-body-text leading-relaxed font-sans">
+          <h3 className="text-3xl md:text-4xl font-display uppercase">Our Mission</h3>
+          <p className="text-body-text leading-relaxed font-sans text-sm md:text-base">
             To empower every man who walks through our doors with confidence and a sharp look. We provide meticulous service, premium products, and an atmosphere that honors the craft of barbering.
           </p>
         </motion.div>
@@ -147,51 +149,56 @@ const Services = () => {
     : SERVICES.filter(s => s.category === activeCategory);
 
   return (
-    <section id="services" className="py-24 px-6 bg-secondary-bg">
+    <section id="services" className="py-16 md:py-24 px-5 md:px-6 bg-secondary-bg">
       <div className="max-w-7xl mx-auto">
         <SectionHeading title="Our Services" subtitle="Expertise" />
         
-        {/* Filter */}
-        <div className="flex flex-wrap gap-4 mb-12">
+        {/* Filter - scrollable on mobile */}
+        <div className="flex flex-wrap gap-3 mb-10 md:mb-12">
           {['All', 'Hair', 'Beard', 'Grooming', 'Premium'].map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat as any)}
-              className={`px-6 py-2 text-xs uppercase tracking-widest border transition-all ${activeCategory === cat ? 'bg-primary-bg text-heading-text border-primary border-solid' : 'bg-transparent text-heading-text border-white/10 hover:border-primary border-solid'}`}
+              className={`px-4 md:px-6 py-2 text-xs uppercase tracking-widest border transition-all rounded-full ${
+                activeCategory === cat
+                  ? 'bg-primary-bg text-heading-text border-primary border-solid'
+                  : 'bg-transparent text-heading-text border-white/10 hover:border-primary border-solid'
+              }`}
             >
               {cat}
             </button>
           ))}
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-white/5 border border-white/10 border-solid">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredServices.length > 0 ? (
             filteredServices.map((service, idx) => (
               <Link to={`/services/${service.title.toLowerCase().replace(/\\s+/g, '-')}`} key={service.title} className="block">
                 <motion.div 
                   initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
-                className="group relative aspect-square overflow-hidden bg-primary-bg-bg"
-              >
-                <img 
-                  src={service.image} 
-                  alt={service.title} 
-                  className="w-full h-full object-cover grayscale group-hover:scale-110 transition-transform duration-700"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8 text-heading-text">
-                  <p className="text-xs uppercase tracking-widest mb-2 opacity-70">{service.category}</p>
-                  <h4 className="text-3xl mb-1 font-display uppercase">{service.title}</h4>
-                  <p className="text-sm opacity-80 mb-4 font-sans">{service.description}</p>
-                  <p className="text-xl font-display">{service.price}</p>
-                </div>
-              </motion.div>
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1 }}
+                  className="group relative aspect-square overflow-hidden rounded-xl bg-primary-bg-bg"
+                >
+                  <img 
+                    src={service.image} 
+                    alt={service.title} 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    style={{ filter: 'contrast(1.15) brightness(1.05) saturate(1.1)' }}
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8 text-heading-text">
+                    <p className="text-xs uppercase tracking-widest mb-2 opacity-70">{service.category}</p>
+                    <h4 className="text-3xl mb-1 font-display uppercase">{service.title}</h4>
+                    <p className="text-sm opacity-80 mb-4 font-sans">{service.description}</p>
+                    <p className="text-xl font-display">{service.price}</p>
+                  </div>
+                </motion.div>
               </Link>
             ))
           ) : (
-            <div className="col-span-full py-20 text-center bg-primary-bg-bg">
+            <div className="col-span-full py-20 text-center">
               <p className="text-muted-text text-xs uppercase tracking-widest">No services found in this category.</p>
             </div>
           )}
@@ -202,23 +209,23 @@ const Services = () => {
 };
 
 const ProductsMerch = () => (
-  <section id="products" className="py-24 px-6 bg-primary-bg-bg">
+  <section id="products" className="py-16 md:py-24 px-5 md:px-6 bg-primary-bg-bg">
     <div className="max-w-7xl mx-auto">
-      <div className="grid md:grid-cols-2 gap-24">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24">
         {/* Products */}
         <div>
           <SectionHeading title="Apothecary" subtitle="Premium Products" />
-          <div className="grid grid-cols-1 gap-12">
+          <div className="grid grid-cols-1 gap-8 md:gap-12">
             {PRODUCTS.length > 0 ? (
               PRODUCTS.map((product) => (
-                <div key={product.name} className="flex gap-8 items-center group">
-                  <div className="w-32 h-32 overflow-hidden bg-secondary-bg">
-                    <img src={product.image} alt={product.name} className="w-full h-full object-cover grayscale group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
+                <div key={product.name} className="flex gap-5 md:gap-8 items-center group">
+                  <div className="w-20 h-20 md:w-32 md:h-32 flex-shrink-0 overflow-hidden bg-secondary-bg rounded-lg">
+                    <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" style={{ filter: 'contrast(1.12) brightness(1.06) saturate(1.1)' }} referrerPolicy="no-referrer" />
                   </div>
                   <div className="flex-1 border-b border-white/10 border-solid pb-4">
                     <div className="flex justify-between items-end mb-2">
-                      <h4 className="text-2xl font-display uppercase">{product.name}</h4>
-                      <span className="text-lg font-display">{product.price}</span>
+                      <h4 className="text-lg md:text-2xl font-display uppercase">{product.name}</h4>
+                      <span className="text-base md:text-lg font-display">{product.price}</span>
                     </div>
                     <button className="text-xs uppercase tracking-widest font-bold flex items-center gap-2 hover:gap-4 transition-all">
                       Add to Cart <ArrowRight size={12} />
@@ -235,17 +242,17 @@ const ProductsMerch = () => (
         {/* Merchandise */}
         <div>
           <SectionHeading title="Dry Goods" subtitle="Merchandise" />
-          <div className="grid grid-cols-1 gap-12">
+          <div className="grid grid-cols-1 gap-8 md:gap-12">
             {MERCHANDISE.length > 0 ? (
               MERCHANDISE.map((item) => (
-                <div key={item.name} className="flex gap-8 items-center group">
-                  <div className="w-32 h-32 overflow-hidden bg-secondary-bg">
-                    <img src={item.image} alt={item.name} className="w-full h-full object-cover grayscale group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
+                <div key={item.name} className="flex gap-5 md:gap-8 items-center group">
+                  <div className="w-20 h-20 md:w-32 md:h-32 flex-shrink-0 overflow-hidden bg-secondary-bg rounded-lg">
+                    <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" style={{ filter: 'contrast(1.12) brightness(1.06) saturate(1.1)' }} referrerPolicy="no-referrer" />
                   </div>
                   <div className="flex-1 border-b border-white/10 border-solid pb-4">
                     <div className="flex justify-between items-end mb-2">
-                      <h4 className="text-2xl font-display uppercase">{item.name}</h4>
-                      <span className="text-lg font-display">{item.price}</span>
+                      <h4 className="text-lg md:text-2xl font-display uppercase">{item.name}</h4>
+                      <span className="text-base md:text-lg font-display">{item.price}</span>
                     </div>
                     <button className="text-xs uppercase tracking-widest font-bold flex items-center gap-2 hover:gap-4 transition-all">
                       Add to Cart <ArrowRight size={12} />
@@ -264,11 +271,11 @@ const ProductsMerch = () => (
 );
 
 const RateCard = () => (
-  <section id="rate-card" className="py-24 px-6 bg-primary-bg text-heading-text">
+  <section id="rate-card" className="py-16 md:py-24 px-5 md:px-6 bg-primary-bg text-heading-text">
     <div className="max-w-4xl mx-auto">
-      <div className="text-center mb-16">
+      <div className="text-center mb-12 md:mb-16">
         <p className="text-xs uppercase tracking-[0.4em] text-body-text mb-4">Investment</p>
-        <h2 className="text-6xl md:text-8xl font-display uppercase">Rate Card</h2>
+        <h2 className="text-5xl md:text-8xl font-display uppercase">Rate Card</h2>
       </div>
       
       <div className="space-y-8">
@@ -281,18 +288,18 @@ const RateCard = () => (
             <h5 className="text-xs uppercase tracking-widest text-body-text border-b border-white/10 border-solid pb-2">{group.category}</h5>
             {group.items.map((item) => (
               <div key={item.n} className="flex justify-between items-end group cursor-default">
-                <span className="text-xl md:text-2xl uppercase tracking-wide group-hover:translate-x-2 transition-transform font-display">{item.n}</span>
+                <span className="text-lg md:text-2xl uppercase tracking-wide group-hover:translate-x-2 transition-transform font-display">{item.n}</span>
                 <div className="flex-1 border-b border-dashed border-white/10 mx-4 mb-2 border-solid" />
-                <span className="text-xl md:text-2xl font-display">{item.p}</span>
+                <span className="text-lg md:text-2xl font-display">{item.p}</span>
               </div>
             ))}
           </div>
         ))}
       </div>
 
-      <div className="mt-16 text-center">
+      <div className="mt-12 md:mt-16 text-center">
         <p className="text-xs text-body-text uppercase tracking-widest mb-8">All services include a complimentary beverage and consultation.</p>
-        <button className="bg-primary-bg-bg text-heading-text px-12 py-4 text-xs uppercase tracking-[0.2em] font-bold hover:bg-white/5 transition-colors">
+        <button className="bg-primary-bg-bg text-heading-text px-8 md:px-12 py-4 text-xs uppercase tracking-[0.2em] font-bold hover:bg-white/5 transition-colors w-full md:w-auto">
           Download PDF Menu
         </button>
       </div>
@@ -300,33 +307,55 @@ const RateCard = () => (
   </section>
 );
 
-const Gallery = () => (
-  <section id="gallery" className="py-24 px-6 bg-primary-bg-bg">
-    <div className="max-w-7xl mx-auto">
-      <SectionHeading title="The Archive" subtitle="Visuals" />
-      <div className="columns-1 md:columns-2 lg:columns-3 gap-4 space-y-4">
-        {GALLERY_IMAGES.map((img, idx) => (
-          <motion.div 
-            key={idx}
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: idx * 0.1 }}
-            className="relative group overflow-hidden"
-          >
-            <img 
-              src={img} 
-              alt={`Gallery ${idx}`} 
-              className="w-full grayscale hover:grayscale-0 transition-all duration-700"
-              referrerPolicy="no-referrer"
-            />
-            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  </section>
+const ARCHIVE_IMAGES = [
+  'https://images.pexels.com/photos/1319459/pexels-photo-1319459.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'https://images.pexels.com/photos/3998429/pexels-photo-3998429.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'https://images.pexels.com/photos/2080006/pexels-photo-2080006.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'https://images.pexels.com/photos/2040050/pexels-photo-2040050.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'https://images.pexels.com/photos/1570806/pexels-photo-1570806.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'https://images.pexels.com/photos/668196/pexels-photo-668196.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'https://images.pexels.com/photos/1805600/pexels-photo-1805600.jpeg?auto=compress&cs=tinysrgb&w=800',
+];
+
+// Flash overlay for gallery navigation
+const GalleryFlash = ({ active }: { active: boolean }) => (
+  <AnimatePresence>
+    {active && (
+      <motion.div
+        key="flash"
+        className="fixed inset-0 bg-[#0b0a08] z-[999] pointer-events-none"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.35, ease: 'easeInOut' }}
+      />
+    )}
+  </AnimatePresence>
 );
+
+const Gallery = () => {
+  const navigate = useNavigate();
+  const [flashing, setFlashing] = useState(false);
+
+  const handleGalleryNav = () => {
+    setFlashing(true);
+    setTimeout(() => navigate('/gallery'), 340);
+  };
+
+  return (
+    <section id="gallery" className="bg-[#0b0a08] relative">
+      <GalleryFlash active={flashing} />
+      <ImageAutoSlider
+        images={ARCHIVE_IMAGES}
+        title="The Archive"
+        subtitle="Visuals"
+        speed={38}
+        onImageClick={handleGalleryNav}
+      />
+    </section>
+  );
+};
 
 import { FeatureSteps } from '../components/ui/feature-section';
 
@@ -365,11 +394,11 @@ const MediaCenter = () => {
 };
 
 const FranchiseForm = () => (
-  <section id="franchise" className="py-24 px-6 bg-primary-bg-bg">
-    <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-24">
+  <section id="franchise" className="py-16 md:py-24 px-5 md:px-6 bg-primary-bg-bg">
+    <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24">
       <div>
         <SectionHeading title="Join the Legacy" subtitle="Franchise" />
-        <p className="text-lg text-body-text leading-relaxed mb-8 font-sans">
+        <p className="text-base md:text-lg text-body-text leading-relaxed mb-8 font-sans">
           We are looking for partners who share our passion for excellence and tradition. Bring the Vanguard experience to your city.
         </p>
         <div className="space-y-4">
@@ -385,7 +414,7 @@ const FranchiseForm = () => (
         </div>
       </div>
       
-      <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+      <form className="space-y-5 md:space-y-6" onSubmit={(e) => e.preventDefault()}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <label className="text-xs uppercase tracking-widest font-bold">Name</label>
@@ -423,68 +452,36 @@ const FranchiseForm = () => (
 );
 
 const ContactUs = () => (
-  <section id="contact" className="py-24 px-6 bg-secondary-bg">
-    <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-24">
-      <div className="space-y-12">
+  <section id="contact" className="py-16 md:py-24 px-5 md:px-6 bg-secondary-bg">
+    <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24">
+      <div className="space-y-8 md:space-y-12">
         <SectionHeading title="Get in Touch" subtitle="Contact" />
-        
-        <div className="space-y-8">
-          <div className="flex gap-6">
-            <MapPin size={24} className="text-heading-text shrink-0" />
-            <div>
-              <h5 className="text-xs uppercase tracking-widest font-bold mb-2">Location</h5>
-              <p className="text-body-text font-sans">123 Savile Row, Mayfair<br />London, W1S 3PR</p>
-            </div>
-          </div>
-          <div className="flex gap-6">
-            <Phone size={24} className="text-heading-text shrink-0" />
-            <div>
-              <h5 className="text-xs uppercase tracking-widest font-bold mb-2">Phone</h5>
-              <p className="text-body-text font-sans">+44 (0) 20 7123 4567</p>
-            </div>
-          </div>
-          <div className="flex gap-6">
-            <Mail size={24} className="text-heading-text shrink-0" />
-            <div>
-              <h5 className="text-xs uppercase tracking-widest font-bold mb-2">Email</h5>
-              <p className="text-body-text font-sans">appointments@vanguard.com</p>
-            </div>
-          </div>
+        <div className="space-y-6 md:space-y-8">
+          <div className="flex gap-5"><MapPin size={20} className="text-heading-text shrink-0 mt-1" /><div><h5 className="text-xs uppercase tracking-widest font-bold mb-1">Location</h5><p className="text-body-text font-sans text-sm">123 Savile Row, Mayfair<br />London, W1S 3PR</p></div></div>
+          <div className="flex gap-5"><Phone size={20} className="text-heading-text shrink-0 mt-1" /><div><h5 className="text-xs uppercase tracking-widest font-bold mb-1">Phone</h5><p className="text-body-text font-sans text-sm">+44 (0) 20 7123 4567</p></div></div>
+          <div className="flex gap-5"><Mail size={20} className="text-heading-text shrink-0 mt-1" /><div><h5 className="text-xs uppercase tracking-widest font-bold mb-1">Email</h5><p className="text-body-text font-sans text-sm">appointments@vanguard.com</p></div></div>
         </div>
-
-        <div className="flex gap-6 pt-8">
-          <a href="#" className="p-3 border border-white/10 border-solid hover:border-primary transition-colors"><Instagram size={20} /></a>
-          <a href="#" className="p-3 border border-white/10 border-solid hover:border-primary transition-colors"><Facebook size={20} /></a>
-          <a href="#" className="p-3 border border-white/10 border-solid hover:border-primary transition-colors"><Twitter size={20} /></a>
+        <div className="flex gap-4">
+          <a href="#" className="p-2.5 border border-white/10 border-solid hover:border-primary transition-colors"><Instagram size={18} /></a>
+          <a href="#" className="p-2.5 border border-white/10 border-solid hover:border-primary transition-colors"><Facebook size={18} /></a>
+          <a href="#" className="p-2.5 border border-white/10 border-solid hover:border-primary transition-colors"><Twitter size={18} /></a>
         </div>
       </div>
-
-      <form className="bg-primary-bg-bg p-12 space-y-6 shadow-2xl" onSubmit={(e) => e.preventDefault()}>
-        <div className="space-y-2">
-          <label className="text-xs uppercase tracking-widest font-bold">Name</label>
-          <input type="text" className="w-full bg-transparent border border-primary border-solid p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" />
+      <form className="bg-primary-bg-bg p-6 md:p-12 space-y-5 shadow-2xl rounded-xl" onSubmit={(e) => e.preventDefault()}>
+        <div className="space-y-2"><label className="text-xs uppercase tracking-widest font-bold">Name</label><input type="text" className="w-full bg-transparent border border-primary border-solid p-3 md:p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" /></div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+          <div className="space-y-2"><label className="text-xs uppercase tracking-widest font-bold">Email</label><input type="email" className="w-full bg-transparent border border-primary border-solid p-3 md:p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" /></div>
+          <div className="space-y-2"><label className="text-xs uppercase tracking-widest font-bold">Phone</label><input type="tel" className="w-full bg-transparent border border-primary border-solid p-3 md:p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" /></div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <label className="text-xs uppercase tracking-widest font-bold">Email</label>
-            <input type="email" className="w-full bg-transparent border border-primary border-solid p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" />
-          </div>
-          <div className="space-y-2">
-            <label className="text-xs uppercase tracking-widest font-bold">Phone</label>
-            <input type="tel" className="w-full bg-transparent border border-primary border-solid p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" />
-          </div>
-        </div>
-        <div className="space-y-2">
-          <label className="text-xs uppercase tracking-widest font-bold">Message</label>
-          <textarea rows={4} className="w-full bg-transparent border border-primary border-solid p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" />
-        </div>
-        <button className="bg-primary-bg text-heading-text w-full py-5 text-xs uppercase tracking-[0.3em] font-bold hover:bg-neutral-800 transition-colors">
+        <div className="space-y-2"><label className="text-xs uppercase tracking-widest font-bold">Message</label><textarea rows={4} className="w-full bg-transparent border border-primary border-solid p-3 md:p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" /></div>
+        <button className="bg-primary-bg text-heading-text w-full py-4 md:py-5 text-xs uppercase tracking-[0.3em] font-bold hover:bg-neutral-800 transition-colors">
           Send Message
         </button>
       </form>
     </div>
   </section>
 );
+
 
 
 

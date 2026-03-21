@@ -79,9 +79,10 @@ export default function Services() {
                  <img 
                     src={service.image} 
                     alt={service.title} 
-                    className="w-full h-full object-cover grayscale opacity-60 group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-all duration-700"
+                    style={{ filter: 'contrast(1.18) brightness(1.06) saturate(1.12)' }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/60 to-transparent opacity-90 group-hover:opacity-70 transition-opacity duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-80 group-hover:opacity-70 transition-opacity duration-500" />
                   
                   <div className="absolute inset-0 p-8 flex flex-col justify-end">
                      <span className="text-xs uppercase text-muted-text tracking-widest font-bold mb-2 block">{service.category}</span>
