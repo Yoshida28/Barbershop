@@ -1,17 +1,34 @@
 'use client'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom' // Changed from next/link
 import { Button } from '../ui/button'
 import { InfiniteSlider } from '../ui/infinite-slider'
 import { ProgressiveBlur } from '../ui/progressive-blur'
 import { cn } from '../../lib/utils'
 import { Menu, X, ChevronRight, Scissors, Star, Shield, Award, Crown, Sparkles } from 'lucide-react'
-import { useScroll, motion } from 'framer-motion' // Changed from motion/react
+import { useScroll, motion, AnimatePresence } from 'framer-motion'
 
 const HERO_VIDEO_START = 13
 const HERO_VIDEO_END = 60
 
+const PHRASES = [
+  "Elevate Your Style at the",
+  "Master Your Look at the",
+  "Refine Your Edge at the",
+  "Discover True Luxury at the",
+  "Experience Perfection at the"
+];
+
 export function HeroSection() {
+    const [index, setIndex] = useState(0);
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setIndex((prev) => (prev + 1) % PHRASES.length);
+        }, 3500);
+        return () => clearInterval(timer);
+    }, []);
+
     return (
         <>
             <main className="overflow-x-hidden pt-20">
@@ -20,7 +37,23 @@ export function HeroSection() {
                         <div className="relative z-10 mx-auto flex max-w-7xl flex-col px-6 lg:block lg:px-12">
                             <div className="mx-auto max-w-lg text-center lg:ml-0 lg:max-w-full lg:text-left">
                                 <h1 className="mt-8 max-w-3xl text-balance text-5xl md:text-6xl lg:mt-16 xl:text-7xl font-display uppercase tracking-widest text-heading-text">
-                                  Elevate Your Style at <span className="text-white italic block mt-2">TheBarberShop</span>
+                                    <div className="relative h-[2.5em] md:h-[2em] w-full flex items-center justify-center lg:justify-start">
+                                        <AnimatePresence mode="popLayout">
+                                            <motion.span
+                                                key={index}
+                                                initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
+                                                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                                                exit={{ opacity: 0, y: -20, filter: "blur(4px)" }}
+                                                transition={{ duration: 0.6, ease: "easeInOut" }}
+                                                className="absolute w-full"
+                                            >
+                                                {PHRASES[index]}
+                                            </motion.span>
+                                        </AnimatePresence>
+                                    </div>
+                                    <span className="block mt-2">
+                                        <span className="text-white italic">Barbershop</span>
+                                    </span>
                                 </h1>
 
                                 <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row lg:justify-start">
@@ -54,7 +87,7 @@ export function HeroSection() {
                         </div>
                     </div>
                 </section>
-                <section className="bg-background pb-8 pt-12 md:pb-16 border-t border-white/5 relative z-10 overflow-hidden">
+                <section className="bg-background pb-4 pt-4 md:pb-6 border-t border-white/5 relative z-10 overflow-hidden">
                     <div className="group relative m-auto max-w-7xl px-6">
                         <div className="flex flex-col items-center md:flex-row gap-8">
                             <div className="md:max-w-44 md:border-r border-white/10 md:pr-6 whitespace-nowrap">

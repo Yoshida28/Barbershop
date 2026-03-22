@@ -8,9 +8,11 @@ const navLinks = [
   { label: 'Home', href: '/' },
   { label: 'About', href: '/about' },
   { label: 'Services', href: '/services' },
-  { label: 'Products', href: '/products' },
+  { label: 'Shop', href: '/products' },
   { label: 'Gallery', href: '/gallery' },
   { label: 'Locations', href: '/locations' },
+  { label: 'Career', href: '/contact' },
+  { label: 'Franchise', href: '/contact' },
   { label: 'Contact', href: '/contact' },
 ];
 
@@ -44,21 +46,21 @@ const Header = () => {
   return (
     <>
       <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${headerBg}`}>
-        <div className="max-w-7xl mx-auto px-5 md:px-12 flex justify-between items-center">
+        <div className="max-w-[1600px] mx-auto px-5 md:px-12 flex justify-between items-center">
           <Link
             to="/"
-            className="text-lg md:text-2xl font-display tracking-[0.3em] text-[#c4a15a] hover:text-[#d4b56a] transition-colors"
+            className="text-base md:text-xl xl:text-2xl font-display tracking-[0.2em] md:tracking-[0.3em] text-[#c4a15a] hover:text-[#d4b56a] transition-colors shrink-0 mr-4"
           >
             THEBARBERSHOP
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex gap-8">
+          <nav className="hidden lg:flex gap-4 xl:gap-6 flex-wrap justify-end">
             {navLinks.map(link => (
               <Link
                 key={link.label}
                 to={link.href}
-                className={`text-xs uppercase tracking-[0.2em] font-bold transition-colors ${
+                className={`text-[10px] xl:text-xs uppercase tracking-[0.15em] xl:tracking-[0.2em] font-bold transition-colors whitespace-nowrap ${
                   location.pathname === link.href
                     ? 'text-[#c4a15a]'
                     : 'text-[#7f6738] hover:text-[#c4a15a]'
@@ -72,7 +74,7 @@ const Header = () => {
           {/* Mobile hamburger */}
           <button
             onClick={() => setMobileOpen(v => !v)}
-            className="md:hidden p-2 text-[#c4a15a] focus:outline-none"
+            className="lg:hidden p-2 text-[#c4a15a] focus:outline-none"
             aria-label="Toggle menu"
           >
             {mobileOpen ? <X size={22} /> : <Menu size={22} />}

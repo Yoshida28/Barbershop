@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Phone, Mail, ArrowRight, Building } from 'lucide-react';
+import { MapPin, Phone, Mail, ArrowRight, Building, Briefcase } from 'lucide-react';
+import { LocationSelectors } from '../components/ui/location-selectors';
 
 const SectionHeading = ({ title, subtitle }: { title: string; subtitle?: string }) => (
   <div className="mb-20 text-center md:text-left w-full">
@@ -53,8 +54,17 @@ const FloatingTextarea = ({ label, id }: { label: string, id: string }) => (
    </div>
  );
 
+type TabType = 'general' | 'franchise' | 'career';
+
+const TAB_CONFIG: Record<TabType, { label: string; title: string; subtitle: string; buttonText: string }> = {
+  general: { label: 'General', title: 'Get in Touch', subtitle: 'Enquiries', buttonText: 'Send Message' },
+  franchise: { label: 'Franchise', title: 'Join the Franchise', subtitle: 'Franchise', buttonText: 'Submit Application' },
+  career: { label: 'Career', title: 'Join Our Team', subtitle: 'Careers', buttonText: 'Submit Application' },
+};
+
 export default function Contact() {
-  const [activeTab, setActiveTab] = useState<'contact' | 'franchise'>('contact');
+  const [activeTab, setActiveTab] = useState<TabType>('general');
+  const config = TAB_CONFIG[activeTab];
 
   return (
     <div className="w-full relative py-24 md:py-32 px-6">
@@ -63,18 +73,15 @@ export default function Contact() {
         {/* Tab Switcher */}
         <div className="flex justify-center mb-16">
            <div className="bg-white/5 p-2 rounded-full flex gap-2">
-              <button 
-                onClick={() => setActiveTab('contact')}
-                className={`px-8 py-3 rounded-full text-xs uppercase tracking-widest font-bold transition-all duration-300 ${activeTab === 'contact' ? 'bg-primary-bg text-heading-text shadow-lg' : 'text-body-text hover:text-heading-text'}`}
-              >
-                 Contact Us
-              </button>
-              <button 
-                onClick={() => setActiveTab('franchise')}
-                className={`px-8 py-3 rounded-full text-xs uppercase tracking-widest font-bold transition-all duration-300 ${activeTab === 'franchise' ? 'bg-primary-bg text-heading-text shadow-lg' : 'text-body-text hover:text-heading-text'}`}
-              >
-                 Franchise Inquiries
-              </button>
+              {(Object.keys(TAB_CONFIG) as TabType[]).map((tab) => (
+                <button 
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-8 py-3 rounded-full text-xs uppercase tracking-widest font-bold transition-all duration-300 ${activeTab === tab ? 'bg-primary-bg text-heading-text shadow-lg' : 'text-body-text hover:text-heading-text'}`}
+                >
+                   {TAB_CONFIG[tab].label}
+                </button>
+              ))}
            </div>
         </div>
 
@@ -90,11 +97,11 @@ export default function Contact() {
 
            <div className="relative z-10">
               <SectionHeading 
-                 title={activeTab === 'contact' ? "Get in Touch" : "Join the Legacy"} 
-                 subtitle={activeTab === 'contact' ? "Enquiries" : "Franchise"} 
+                 title={config.title} 
+                 subtitle={config.subtitle} 
               />
               
-              {activeTab === 'contact' ? (
+              {activeTab === 'general' && (
                  <div className="space-y-10 mt-12">
                     <p className="text-body-text font-light leading-relaxed mb-12">
                        For appointments, press inquiries, or general questions, we invite you to connect with our concierge team.
@@ -121,7 +128,9 @@ export default function Contact() {
                       </div>
                     </div>
                  </div>
-              ) : (
+              )}
+
+              {activeTab === 'franchise' && (
                  <div className="space-y-10 mt-12">
                     <p className="text-body-text font-light leading-relaxed mb-8">
                        Partner with TheBarberShop to bring premium grooming to your city. We offer comprehensive support, training, and a proven business model.
@@ -133,29 +142,35 @@ export default function Contact() {
                     </div>
                  </div>
               )}
+
+              {activeTab === 'career' && (
+                 <div className="space-y-10 mt-12">
+                    <p className="text-body-text font-light leading-relaxed mb-8">
+                       Join a team of passionate professionals dedicated to the art of grooming. We're always looking for talented barbers, stylists, and creatives.
+                    </p>
+                    <div className="bg-secondary-bg p-8 rounded-sm border-l-4 border-primary">
+                       <Briefcase className="text-heading-text mb-4" size={32} />
+                       <h4 className="font-display text-2xl uppercase tracking-widest mb-2">Build Your Career</h4>
+                       <p className="text-sm text-body-text font-light">We invest in our people with world-class training, competitive compensation, and a culture that celebrates craft and creativity.</p>
+                    </div>
+                 </div>
+              )}
            </div>
 
-           {/* Form Section */}
+           {/* Form Section — same fields for all tabs */}
            <div className="relative z-10 md:mt-16">
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-                 <div className="grid md:grid-cols-2 gap-8">
-                    <FloatingInput label="First Name" id="firstName" />
-                    <FloatingInput label="Last Name" id="lastName" />
-                 </div>
+                 <FloatingInput label="Name" id="name" />
                  <FloatingInput label="Email Address" type="email" id="email" />
-                 
-                 {activeTab === 'franchise' && (
-                    <div className="grid md:grid-cols-2 gap-8">
-                       <FloatingInput label="City of Interest" id="city" />
-                       <FloatingInput label="Investment Capital ($)" type="number" id="capital" />
-                    </div>
-                 )}
-
-                 <FloatingTextarea label="Your Message" id="message" />
+                 <FloatingInput label="Phone Number" type="tel" id="phone" />
+                 <div className="grid md:grid-cols-3 gap-8">
+                    <LocationSelectors variant="floating" />
+                 </div>
+                 <FloatingTextarea label="Message" id="message" />
                  
                  <button className="w-full mt-4 bg-primary-bg text-heading-text py-5 px-8 flex justify-between items-center group hover:bg-black transition-colors rounded-sm shadow-xl">
                     <span className="text-xs uppercase font-bold tracking-[0.3em]">
-                       {activeTab === 'contact' ? 'Send Message' : 'Submit Application'}
+                       {config.buttonText}
                     </span>
                     <ArrowRight size={20} className="transform group-hover:translate-x-2 transition-transform" />
                  </button>

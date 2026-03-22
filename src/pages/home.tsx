@@ -9,13 +9,14 @@ import { HeroSection } from '../components/blocks/hero-section-5';
 import ElegantCarousel from '../components/ui/elegant-carousel';
 import { SmokeBackground } from '../components/ui/spooky-smoke-animation';
 import { ImageAutoSlider } from '../components/ui/image-auto-slider';
+import { LocationSelectors } from '../components/ui/location-selectors';
 
 // --- Types ---
 interface Service {
   title: string;
   price: string;
   description: string;
-  category: 'Hair' | 'Beard' | 'Grooming' | 'Premium';
+  category: 'Hair' | 'Beard' | 'Skin' | 'Nail' | 'Makeup' | 'Combo';
   image: string;
 }
 
@@ -29,10 +30,10 @@ interface Product {
 const SERVICES: Service[] = [
   { title: "Executive Haircut", price: "$65", description: "Precision cut with hot towel finish.", category: 'Hair', image: "https://images.pexels.com/photos/1319459/pexels-photo-1319459.jpeg?auto=compress&cs=tinysrgb&w=800" },
   { title: "Signature Beard Trim", price: "$40", description: "Sculpting and conditioning treatment.", category: 'Beard', image: "https://images.pexels.com/photos/3998429/pexels-photo-3998429.jpeg?auto=compress&cs=tinysrgb&w=800" },
-  { title: "Classic Hot Shave", price: "$50", description: "Traditional straight razor experience.", category: 'Grooming', image: "https://images.pexels.com/photos/2080006/pexels-photo-2080006.jpeg?auto=compress&cs=tinysrgb&w=800" },
-  { title: "The TheBarberShop Package", price: "$120", description: "Full hair, beard, and facial treatment.", category: 'Premium', image: "https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=800" },
+  { title: "Classic Hot Shave", price: "$50", description: "Traditional straight razor experience.", category: 'Skin', image: "https://images.pexels.com/photos/2080006/pexels-photo-2080006.jpeg?auto=compress&cs=tinysrgb&w=800" },
+  { title: "The TheBarberShop Package", price: "$120", description: "Full hair, beard, and facial treatment.", category: 'Combo', image: "https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=800" },
   { title: "Scalp Therapy", price: "$35", description: "Invigorating massage and deep conditioning.", category: 'Hair', image: "https://images.pexels.com/photos/2040050/pexels-photo-2040050.jpeg?auto=compress&cs=tinysrgb&w=800" },
-  { title: "Grey Blending", price: "$45", description: "Subtle, natural color integration.", category: 'Premium', image: "https://images.pexels.com/photos/1570806/pexels-photo-1570806.jpeg?auto=compress&cs=tinysrgb&w=800" },
+  { title: "Grey Blending", price: "$45", description: "Subtle, natural color integration.", category: 'Makeup', image: "https://images.pexels.com/photos/1570806/pexels-photo-1570806.jpeg?auto=compress&cs=tinysrgb&w=800" },
 ];
 
 const PRODUCTS: Product[] = [
@@ -142,7 +143,7 @@ const AboutVisionMission = () => (
 );
 
 const Services = () => {
-  const [activeCategory, setActiveCategory] = useState<'All' | 'Hair' | 'Beard' | 'Grooming' | 'Premium'>('All');
+  const [activeCategory, setActiveCategory] = useState<'All' | 'Hair' | 'Beard' | 'Skin' | 'Nail' | 'Makeup' | 'Combo'>('All');
   
   const filteredServices = activeCategory === 'All' 
     ? SERVICES 
@@ -155,7 +156,7 @@ const Services = () => {
         
         {/* Filter - scrollable on mobile */}
         <div className="flex flex-wrap gap-3 mb-10 md:mb-12">
-          {['All', 'Hair', 'Beard', 'Grooming', 'Premium'].map((cat) => (
+          {['All', 'Hair', 'Beard', 'Skin', 'Nail', 'Makeup', 'Combo'].map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat as any)}
@@ -393,94 +394,121 @@ const MediaCenter = () => {
   );
 };
 
-const FranchiseForm = () => (
-  <section id="franchise" className="py-16 md:py-24 px-5 md:px-6 bg-primary-bg-bg">
-    <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24">
-      <div>
-        <SectionHeading title="Join the Legacy" subtitle="Franchise" />
-        <p className="text-base md:text-lg text-body-text leading-relaxed mb-8 font-sans">
-          We are looking for partners who share our passion for excellence and tradition. Bring the TheBarberShop experience to your city.
-        </p>
-        <div className="space-y-4">
-          <div className="flex items-center gap-4 text-xs uppercase tracking-widest font-bold">
-            <Award size={20} /> Proven Business Model
-          </div>
-          <div className="flex items-center gap-4 text-xs uppercase tracking-widest font-bold">
-            <Scissors size={20} /> Master Barber Training
-          </div>
-          <div className="flex items-center gap-4 text-xs uppercase tracking-widest font-bold">
-            <Star size={20} /> Global Brand Recognition
-          </div>
-        </div>
-      </div>
-      
-      <form className="space-y-5 md:space-y-6" onSubmit={(e) => e.preventDefault()}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <label className="text-xs uppercase tracking-widest font-bold">Name</label>
-            <input type="text" className="w-full bg-transparent border border-primary border-solid p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" placeholder="John Doe" />
-          </div>
-          <div className="space-y-2">
-            <label className="text-xs uppercase tracking-widest font-bold">Email</label>
-            <input type="email" className="w-full bg-transparent border border-primary border-solid p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" placeholder="john@example.com" />
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="space-y-2">
-            <label className="text-xs uppercase tracking-widest font-bold">City</label>
-            <input type="text" className="w-full bg-transparent border border-primary border-solid p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" />
-          </div>
-          <div className="space-y-2">
-            <label className="text-xs uppercase tracking-widest font-bold">State</label>
-            <input type="text" className="w-full bg-transparent border border-primary border-solid p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" />
-          </div>
-          <div className="space-y-2">
-            <label className="text-xs uppercase tracking-widest font-bold">Country</label>
-            <input type="text" className="w-full bg-transparent border border-primary border-solid p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" />
-          </div>
-        </div>
-        <div className="space-y-2">
-          <label className="text-xs uppercase tracking-widest font-bold">Message</label>
-          <textarea rows={4} className="w-full bg-transparent border border-primary border-solid p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" placeholder="Tell us about your vision..." />
-        </div>
-        <button className="bg-primary-bg text-heading-text w-full py-5 text-xs uppercase tracking-[0.3em] font-bold hover:bg-neutral-800 transition-colors">
-          Submit Enquiry
-        </button>
-      </form>
-    </div>
-  </section>
-);
+const ContactSection = () => {
+  const [activeTab, setActiveTab] = useState<'general' | 'franchise' | 'career'>('general');
 
-const ContactUs = () => (
-  <section id="contact" className="py-16 md:py-24 px-5 md:px-6 bg-secondary-bg">
-    <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24">
-      <div className="space-y-8 md:space-y-12">
-        <SectionHeading title="Get in Touch" subtitle="Contact" />
-        <div className="space-y-6 md:space-y-8">
-          <div className="flex gap-5"><MapPin size={20} className="text-heading-text shrink-0 mt-1" /><div><h5 className="text-xs uppercase tracking-widest font-bold mb-1">Location</h5><p className="text-body-text font-sans text-sm">123 Savile Row, Mayfair<br />London, W1S 3PR</p></div></div>
-          <div className="flex gap-5"><Phone size={20} className="text-heading-text shrink-0 mt-1" /><div><h5 className="text-xs uppercase tracking-widest font-bold mb-1">Phone</h5><p className="text-body-text font-sans text-sm">+44 (0) 20 7123 4567</p></div></div>
-          <div className="flex gap-5"><Mail size={20} className="text-heading-text shrink-0 mt-1" /><div><h5 className="text-xs uppercase tracking-widest font-bold mb-1">Email</h5><p className="text-body-text font-sans text-sm">appointments@thebarbershop.com</p></div></div>
+  const tabConfig = {
+    general: { label: 'General', title: 'Get in Touch', subtitle: 'Contact', buttonText: 'Send Message' },
+    franchise: { label: 'Franchise', title: 'Join the Franchise', subtitle: 'Franchise', buttonText: 'Submit Application' },
+    career: { label: 'Career', title: 'Join Our Team', subtitle: 'Careers', buttonText: 'Submit Application' },
+  };
+
+  const config = tabConfig[activeTab];
+
+  return (
+    <section id="contact" className="py-16 md:py-24 px-5 md:px-6 bg-secondary-bg">
+      <div className="max-w-7xl mx-auto">
+        {/* Tab Switcher */}
+        <div className="flex justify-center mb-12">
+          <div className="bg-white/5 p-1.5 rounded-full flex gap-2">
+            {(Object.keys(tabConfig) as Array<'general' | 'franchise' | 'career'>).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-6 md:px-8 py-2.5 rounded-full text-xs uppercase tracking-widest font-bold transition-all duration-300 ${
+                  activeTab === tab
+                    ? 'bg-primary-bg text-heading-text shadow-lg'
+                    : 'text-body-text hover:text-heading-text'
+                }`}
+              >
+                {tabConfig[tab].label}
+              </button>
+            ))}
+          </div>
         </div>
-        <div className="flex gap-4">
-          <a href="#" className="p-2.5 border border-white/10 border-solid hover:border-primary transition-colors"><Instagram size={18} /></a>
-          <a href="#" className="p-2.5 border border-white/10 border-solid hover:border-primary transition-colors"><Facebook size={18} /></a>
-          <a href="#" className="p-2.5 border border-white/10 border-solid hover:border-primary transition-colors"><Twitter size={18} /></a>
-        </div>
+
+        <motion.div
+          key={activeTab}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24"
+        >
+          {/* Left — Info */}
+          <div>
+            <SectionHeading title={config.title} subtitle={config.subtitle} />
+
+            {activeTab === 'general' && (
+              <div className="space-y-6 md:space-y-8">
+                <p className="text-base text-body-text leading-relaxed mb-4 font-sans">
+                  For appointments, press inquiries, or general questions, we invite you to connect with our team.
+                </p>
+                <div className="flex gap-5"><MapPin size={20} className="text-heading-text shrink-0 mt-1" /><div><h5 className="text-xs uppercase tracking-widest font-bold mb-1">Location</h5><p className="text-body-text font-sans text-sm">123 Savile Row, Mayfair<br />London, W1S 3PR</p></div></div>
+                <div className="flex gap-5"><Phone size={20} className="text-heading-text shrink-0 mt-1" /><div><h5 className="text-xs uppercase tracking-widest font-bold mb-1">Phone</h5><p className="text-body-text font-sans text-sm">+44 (0) 20 7123 4567</p></div></div>
+                <div className="flex gap-5"><Mail size={20} className="text-heading-text shrink-0 mt-1" /><div><h5 className="text-xs uppercase tracking-widest font-bold mb-1">Email</h5><p className="text-body-text font-sans text-sm">appointments@thebarbershop.com</p></div></div>
+                <div className="flex gap-4">
+                  <a href="#" className="p-2.5 border border-white/10 border-solid hover:border-primary transition-colors"><Instagram size={18} /></a>
+                  <a href="#" className="p-2.5 border border-white/10 border-solid hover:border-primary transition-colors"><Facebook size={18} /></a>
+                  <a href="#" className="p-2.5 border border-white/10 border-solid hover:border-primary transition-colors"><Twitter size={18} /></a>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'franchise' && (
+              <div>
+                <p className="text-base text-body-text leading-relaxed mb-8 font-sans">
+                  We are looking for partners who share our passion for excellence and tradition. Bring the TheBarberShop experience to your city.
+                </p>
+                <div className="grid grid-cols-2 gap-x-8 gap-y-6">
+                  {[
+                    { label: 'Franchisee Fee', value: '₹3L' },
+                    { label: 'Area Required', value: '300 sqft' },
+                    { label: 'Investment', value: '₹17.5L onwards' },
+                    { label: 'Royalty', value: '₹30K + GST PM' },
+                    { label: 'ROI', value: '24 Months' },
+                  ].map((item) => (
+                    <div key={item.label} className="border-l-2 border-primary pl-4">
+                      <p className="text-xs uppercase tracking-widest text-muted-text mb-1">{item.label}</p>
+                      <p className="text-lg md:text-xl font-display uppercase">{item.value}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'career' && (
+              <div>
+                <p className="text-base text-body-text leading-relaxed mb-8 font-sans">
+                  Join a team of passionate professionals dedicated to the art of grooming. We're always looking for talented barbers, stylists, and creatives.
+                </p>
+                <div className="bg-primary-bg-bg p-6 md:p-8 rounded-sm border-l-4 border-primary">
+                  <h4 className="font-display text-xl md:text-2xl uppercase tracking-widest mb-2">Build Your Career</h4>
+                  <p className="text-sm text-body-text font-sans">We invest in our people with world-class training, competitive compensation, and a culture that celebrates craft and creativity.</p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Right — Form */}
+          <form className="bg-primary-bg-bg p-6 md:p-12 space-y-5 shadow-2xl rounded-xl" onSubmit={(e) => e.preventDefault()}>
+            <div className="space-y-2"><label className="text-xs uppercase tracking-widest font-bold">Name</label><input type="text" className="w-full bg-transparent border border-primary border-solid p-3 md:p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" /></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+              <div className="space-y-2"><label className="text-xs uppercase tracking-widest font-bold">Email</label><input type="email" className="w-full bg-transparent border border-primary border-solid p-3 md:p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" /></div>
+              <div className="space-y-2"><label className="text-xs uppercase tracking-widest font-bold">Phone Number</label><input type="tel" className="w-full bg-transparent border border-primary border-solid p-3 md:p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" /></div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+              <LocationSelectors variant="outline" />
+            </div>
+            <div className="space-y-2"><label className="text-xs uppercase tracking-widest font-bold">Message</label><textarea rows={4} className="w-full bg-transparent border border-primary border-solid p-3 md:p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" /></div>
+            <button className="bg-primary-bg text-heading-text w-full py-4 md:py-5 text-xs uppercase tracking-[0.3em] font-bold hover:bg-neutral-800 transition-colors">
+              {config.buttonText}
+            </button>
+          </form>
+        </motion.div>
       </div>
-      <form className="bg-primary-bg-bg p-6 md:p-12 space-y-5 shadow-2xl rounded-xl" onSubmit={(e) => e.preventDefault()}>
-        <div className="space-y-2"><label className="text-xs uppercase tracking-widest font-bold">Name</label><input type="text" className="w-full bg-transparent border border-primary border-solid p-3 md:p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" /></div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-          <div className="space-y-2"><label className="text-xs uppercase tracking-widest font-bold">Email</label><input type="email" className="w-full bg-transparent border border-primary border-solid p-3 md:p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" /></div>
-          <div className="space-y-2"><label className="text-xs uppercase tracking-widest font-bold">Phone</label><input type="tel" className="w-full bg-transparent border border-primary border-solid p-3 md:p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" /></div>
-        </div>
-        <div className="space-y-2"><label className="text-xs uppercase tracking-widest font-bold">Message</label><textarea rows={4} className="w-full bg-transparent border border-primary border-solid p-3 md:p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" /></div>
-        <button className="bg-primary-bg text-heading-text w-full py-4 md:py-5 text-xs uppercase tracking-[0.3em] font-bold hover:bg-neutral-800 transition-colors">
-          Send Message
-        </button>
-      </form>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 
 
@@ -524,8 +552,7 @@ export default function Home() {
       <RateCard />
       <Gallery />
       <MediaCenter />
-      <FranchiseForm />
-      <ContactUs />
+      <ContactSection />
       </div>
     </div>
   );
