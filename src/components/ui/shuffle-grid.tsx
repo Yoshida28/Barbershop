@@ -9,7 +9,7 @@ export const ShuffleHero = () => {
     <section className="w-full px-8 py-24 grid grid-cols-1 md:grid-cols-2 items-center gap-8 max-w-7xl mx-auto min-h-screen">
       <div>
         <span className="block mb-4 text-xs md:text-sm text-emerald-500 uppercase tracking-[0.3em] font-bold">
-          The Vanguard Portfolio
+          The TheBarberShop Portfolio
         </span>
         <h3 className="text-4xl md:text-6xl lg:text-7xl font-display uppercase tracking-widest text-heading-text leading-tight">
           Precision <br/>& Heritage
@@ -47,7 +47,7 @@ const shuffle = (array: (typeof squareData)[0][]) => {
   return array;
 };
 
-// Vanguard-themed Unsplash images showcasing barbershop concepts
+// TheBarberShop-themed Unsplash images showcasing barbershop concepts
 const squareData = [
   { id: 1, src: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80&w=800&auto=format&fit=crop" },
   { id: 2, src: "https://images.unsplash.com/photo-1621605815971-8bcaf47d6cb0?q=80&w=800&auto=format&fit=crop" },

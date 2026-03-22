@@ -13,7 +13,7 @@ interface ClippedShapeGalleryProps extends React.ComponentPropsWithoutRef<'secti
 
 const ClippedShapeGallery = React.forwardRef<HTMLElement, ClippedShapeGalleryProps>(
   ({ mediaItems, className, ...props }, ref) => {
-    // Vanguard themed default images showcasing premium cuts and shop aesthetics
+    // TheBarberShop themed default images showcasing premium cuts and shop aesthetics
     const defaultMediaItems: MediaItem[] = [
       {
         src: 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80&w=600&auto=format&fit=crop',

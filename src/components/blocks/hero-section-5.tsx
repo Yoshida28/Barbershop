@@ -20,7 +20,7 @@ export function HeroSection() {
                         <div className="relative z-10 mx-auto flex max-w-7xl flex-col px-6 lg:block lg:px-12">
                             <div className="mx-auto max-w-lg text-center lg:ml-0 lg:max-w-full lg:text-left">
                                 <h1 className="mt-8 max-w-3xl text-balance text-5xl md:text-6xl lg:mt-16 xl:text-7xl font-display uppercase tracking-widest text-heading-text">
-                                  Elevate Your Style at <span className="text-white italic block mt-2">Vanguard</span>
+                                  Elevate Your Style at <span className="text-white italic block mt-2">TheBarberShop</span>
                                 </h1>
 
                                 <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row lg:justify-start">
@@ -58,7 +58,7 @@ export function HeroSection() {
                     <div className="group relative m-auto max-w-7xl px-6">
                         <div className="flex flex-col items-center md:flex-row gap-8">
                             <div className="md:max-w-44 md:border-r border-white/10 md:pr-6 whitespace-nowrap">
-                                <p className="text-center md:text-end text-sm uppercase tracking-[0.2em] text-neutral-500 font-bold">The Vanguard Standard</p>
+                                <p className="text-center md:text-end text-sm uppercase tracking-[0.2em] text-neutral-500 font-bold">The TheBarberShop Standard</p>
                             </div>
                             <div className="relative py-2 w-full md:w-[calc(100%-11rem)]">
                                 <InfiniteSlider

@@ -117,7 +117,7 @@ export default function Locations() {
             Our Locations
           </h1>
           <p className="text-lg text-body-text font-light max-w-2xl mx-auto">
-            Vanguard operates exclusive grooming sanctuaries across the globe. Select a location on the map to view detailed store information and book an appointment.
+            TheBarberShop operates exclusive grooming sanctuaries across the globe. Select a location on the map to view detailed store information and book an appointment.
           </p>
         </div>
 

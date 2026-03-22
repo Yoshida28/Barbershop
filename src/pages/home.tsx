@@ -30,7 +30,7 @@ const SERVICES: Service[] = [
   { title: "Executive Haircut", price: "$65", description: "Precision cut with hot towel finish.", category: 'Hair', image: "https://images.pexels.com/photos/1319459/pexels-photo-1319459.jpeg?auto=compress&cs=tinysrgb&w=800" },
   { title: "Signature Beard Trim", price: "$40", description: "Sculpting and conditioning treatment.", category: 'Beard', image: "https://images.pexels.com/photos/3998429/pexels-photo-3998429.jpeg?auto=compress&cs=tinysrgb&w=800" },
   { title: "Classic Hot Shave", price: "$50", description: "Traditional straight razor experience.", category: 'Grooming', image: "https://images.pexels.com/photos/2080006/pexels-photo-2080006.jpeg?auto=compress&cs=tinysrgb&w=800" },
-  { title: "The Vanguard Package", price: "$120", description: "Full hair, beard, and facial treatment.", category: 'Premium', image: "https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=800" },
+  { title: "The TheBarberShop Package", price: "$120", description: "Full hair, beard, and facial treatment.", category: 'Premium', image: "https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=800" },
   { title: "Scalp Therapy", price: "$35", description: "Invigorating massage and deep conditioning.", category: 'Hair', image: "https://images.pexels.com/photos/2040050/pexels-photo-2040050.jpeg?auto=compress&cs=tinysrgb&w=800" },
   { title: "Grey Blending", price: "$45", description: "Subtle, natural color integration.", category: 'Premium', image: "https://images.pexels.com/photos/1570806/pexels-photo-1570806.jpeg?auto=compress&cs=tinysrgb&w=800" },
 ];
@@ -42,7 +42,7 @@ const PRODUCTS: Product[] = [
 ];
 
 const MERCHANDISE: Product[] = [
-  { name: "Vanguard Tee", price: "$45", image: "https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=400" },
+  { name: "TheBarberShop Tee", price: "$45", image: "https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=400" },
   { name: "Leather Apron", price: "$180", image: "https://images.pexels.com/photos/3389531/pexels-photo-3389531.jpeg?auto=compress&cs=tinysrgb&w=400" },
   { name: "Steel Comb", price: "$35", image: "https://images.pexels.com/photos/10153406/pexels-photo-10153406.jpeg?auto=compress&cs=tinysrgb&w=400" },
 ];
@@ -80,7 +80,7 @@ const OnePager = () => (
       <div className="py-4">
         <SectionHeading title="The Art of the Cut" subtitle="Introduction" />
         <p className="text-base md:text-lg leading-relaxed text-body-text mb-8">
-          Vanguard is more than a barbershop; it's a sanctuary for the modern gentleman. We combine centuries-old traditions with contemporary techniques to deliver an unparalleled grooming experience.
+          TheBarberShop is more than a barbershop; it's a sanctuary for the modern gentleman. We combine centuries-old traditions with contemporary techniques to deliver an unparalleled grooming experience.
         </p>
         <div className="grid grid-cols-2 gap-6 md:gap-8">
           <div>
@@ -109,7 +109,7 @@ const AboutVisionMission = () => (
         >
           <h3 className="text-3xl md:text-4xl font-display uppercase">About Us</h3>
           <p className="text-body-text leading-relaxed font-sans text-sm md:text-base">
-            Founded in the heart of the city, Vanguard was born from a desire to return to the roots of masculine grooming. Our master barbers are artists, dedicated to the precision and detail that defines a true gentleman.
+            Founded in the heart of the city, TheBarberShop was born from a desire to return to the roots of masculine grooming. Our master barbers are artists, dedicated to the precision and detail that defines a true gentleman.
           </p>
         </motion.div>
         <motion.div 
@@ -282,7 +282,7 @@ const RateCard = () => (
         {[
           { category: 'Hair', items: [{ n: 'Executive Cut', p: '$65' }, { n: 'Clipper Cut', p: '$45' }, { n: 'Grey Blending', p: '$45' }] },
           { category: 'Beard', items: [{ n: 'Signature Trim', p: '$40' }, { n: 'Hot Razor Shave', p: '$55' }, { n: 'Beard Conditioning', p: '$25' }] },
-          { category: 'Combos', items: [{ n: 'The Vanguard', p: '$120' }, { n: 'Cut & Shave', p: '$100' }] },
+          { category: 'Combos', items: [{ n: 'The TheBarberShop', p: '$120' }, { n: 'Cut & Shave', p: '$100' }] },
         ].map((group) => (
           <div key={group.category} className="space-y-4">
             <h5 className="text-xs uppercase tracking-widest text-body-text border-b border-white/10 border-solid pb-2">{group.category}</h5>
@@ -363,7 +363,7 @@ const MEDIA_FEATURES = [
   { 
     step: 'Oct 12, 2025', 
     title: 'New London Flagship',
-    content: 'Vanguard opens its most ambitious location yet on Savile Row, bridging the gap between traditional tailoring and modern grooming.', 
+    content: 'TheBarberShop opens its most ambitious location yet on Savile Row, bridging the gap between traditional tailoring and modern grooming.', 
     image: 'https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=1200' 
   },
   { 
@@ -375,7 +375,7 @@ const MEDIA_FEATURES = [
   { 
     step: 'Aug 20, 2025',
     title: 'Partnership with Baxter',
-    content: 'Vanguard is proud to announce an exclusive partnership with Baxter of California, bringing luxury apothecary to all locations.',
+    content: 'TheBarberShop is proud to announce an exclusive partnership with Baxter of California, bringing luxury apothecary to all locations.',
     image: 'https://images.pexels.com/photos/4587635/pexels-photo-4587635.jpeg?auto=compress&cs=tinysrgb&w=1200'
   },
 ];
@@ -399,7 +399,7 @@ const FranchiseForm = () => (
       <div>
         <SectionHeading title="Join the Legacy" subtitle="Franchise" />
         <p className="text-base md:text-lg text-body-text leading-relaxed mb-8 font-sans">
-          We are looking for partners who share our passion for excellence and tradition. Bring the Vanguard experience to your city.
+          We are looking for partners who share our passion for excellence and tradition. Bring the TheBarberShop experience to your city.
         </p>
         <div className="space-y-4">
           <div className="flex items-center gap-4 text-xs uppercase tracking-widest font-bold">
@@ -459,7 +459,7 @@ const ContactUs = () => (
         <div className="space-y-6 md:space-y-8">
           <div className="flex gap-5"><MapPin size={20} className="text-heading-text shrink-0 mt-1" /><div><h5 className="text-xs uppercase tracking-widest font-bold mb-1">Location</h5><p className="text-body-text font-sans text-sm">123 Savile Row, Mayfair<br />London, W1S 3PR</p></div></div>
           <div className="flex gap-5"><Phone size={20} className="text-heading-text shrink-0 mt-1" /><div><h5 className="text-xs uppercase tracking-widest font-bold mb-1">Phone</h5><p className="text-body-text font-sans text-sm">+44 (0) 20 7123 4567</p></div></div>
-          <div className="flex gap-5"><Mail size={20} className="text-heading-text shrink-0 mt-1" /><div><h5 className="text-xs uppercase tracking-widest font-bold mb-1">Email</h5><p className="text-body-text font-sans text-sm">appointments@vanguard.com</p></div></div>
+          <div className="flex gap-5"><Mail size={20} className="text-heading-text shrink-0 mt-1" /><div><h5 className="text-xs uppercase tracking-widest font-bold mb-1">Email</h5><p className="text-body-text font-sans text-sm">appointments@thebarbershop.com</p></div></div>
         </div>
         <div className="flex gap-4">
           <a href="#" className="p-2.5 border border-white/10 border-solid hover:border-primary transition-colors"><Instagram size={18} /></a>

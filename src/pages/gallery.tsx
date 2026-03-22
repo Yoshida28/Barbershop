@@ -26,7 +26,7 @@ const InfiniteMarquee = () => {
       
       <div className="flex flex-col gap-8">
         <h3 className="text-center text-xs md:text-sm uppercase tracking-[0.4em] font-bold text-neutral-500 mb-8">
-          The Vanguard Archive
+          The TheBarberShop Archive
         </h3>
         
         <div className="flex w-[200vw] sm:w-[150vw] md:w-[120vw] animate-marquee gap-6 items-center hover:[animation-play-state:paused] group">

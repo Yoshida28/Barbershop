@@ -129,7 +129,7 @@ export const PhotoGallery = ({
           A Journey Through Our Craft
         </p>
         <h3 className="z-20 mx-auto max-w-2xl justify-center font-display tracking-[0.2em] uppercase py-3 text-center text-4xl text-heading-text md:text-5xl lg:text-7xl drop-shadow-lg">
-          Welcome to <span className="text-emerald-500 italic">Vanguard</span>
+          Welcome to <span className="text-emerald-500 italic">TheBarberShop</span>
         </h3>
       </div>
       

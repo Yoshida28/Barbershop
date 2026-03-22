@@ -117,14 +117,14 @@ export default function Contact() {
                       <div className="bg-white/5 p-4 rounded-full group-hover:bg-primary-bg group-hover:text-heading-text transition-colors"><Mail size={24} className="group-hover:text-heading-text text-heading-text" /></div>
                       <div>
                         <h4 className="font-display tracking-widest uppercase text-xl mb-1">EMAIL</h4>
-                        <p className="text-sm text-muted-text">concierge@vanguard.com</p>
+                        <p className="text-sm text-muted-text">concierge@thebarbershop.com</p>
                       </div>
                     </div>
                  </div>
               ) : (
                  <div className="space-y-10 mt-12">
                     <p className="text-body-text font-light leading-relaxed mb-8">
-                       Partner with Vanguard to bring premium grooming to your city. We offer comprehensive support, training, and a proven business model.
+                       Partner with TheBarberShop to bring premium grooming to your city. We offer comprehensive support, training, and a proven business model.
                     </p>
                     <div className="bg-secondary-bg p-8 rounded-sm border-l-4 border-primary">
                        <Building className="text-heading-text mb-4" size={32} />

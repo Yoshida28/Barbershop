@@ -77,10 +77,10 @@ const PRODUCTS: Product[] = [
 
 const MERCHANDISE: Product[] = [
   {
-    name: "Vanguard Tee",
+    name: "TheBarberShop Tee",
     price: "$45",
     image: "https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=600",
-    description: "Premium 100% combed cotton tee bearing the Vanguard mark. Heavyweight construction with a relaxed, tailored fit.",
+    description: "Premium 100% combed cotton tee bearing the TheBarberShop mark. Heavyweight construction with a relaxed, tailored fit.",
     category: "Apparel",
     rating: 4.9,
     reviews: 62,
@@ -120,7 +120,7 @@ const MERCHANDISE: Product[] = [
     name: "Barber Cap",
     price: "$40",
     image: "https://images.pexels.com/photos/1124466/pexels-photo-1124466.jpeg?auto=compress&cs=tinysrgb&w=600",
-    description: "Classic five-panel cap with a curved brim, embroidered Vanguard logo, and a structured crown.",
+    description: "Classic five-panel cap with a curved brim, embroidered TheBarberShop logo, and a structured crown.",
     category: "Apparel",
     rating: 4.6,
     reviews: 41,
@@ -130,7 +130,7 @@ const MERCHANDISE: Product[] = [
     name: "Grooming Kit",
     price: "$95",
     image: "https://images.pexels.com/photos/2637370/pexels-photo-2637370.jpeg?auto=compress&cs=tinysrgb&w=600",
-    description: "The complete Vanguard essentials kit: clay, beard oil, texture spray, and a steel comb — presented in a premium gift box.",
+    description: "The complete TheBarberShop essentials kit: clay, beard oil, texture spray, and a steel comb — presented in a premium gift box.",
     category: "Bundle",
     rating: 5.0,
     reviews: 19,

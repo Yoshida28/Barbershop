@@ -94,7 +94,7 @@ export const ArcGalleryHero: React.FC<ArcGalleryHeroProps> = ({
                     className="block w-full h-full object-cover"
                     draggable={false}
                     onError={(e) => {
-                      (e.target as HTMLImageElement).src = `https://placehold.co/400x400/334155/e2e8f0?text=Vanguard`;
+                      (e.target as HTMLImageElement).src = `https://placehold.co/400x400/334155/e2e8f0?text=TheBarberShop`;
                     }}
                   />
                 </div>

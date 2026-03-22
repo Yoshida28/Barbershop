@@ -33,7 +33,7 @@ const slides: SlideData[] = [
   },
   {
     title: 'Modern Sophistication',
-    subtitle: 'Vanguard Styling',
+    subtitle: 'TheBarberShop Styling',
     description:
       'Bespoke styling and architectural precision—an ode to the meditative elegance of styling and its undeniable confidence.',
     accent: '#8ba7b8', // Slate blue

@@ -37,9 +37,9 @@ export default function About() {
               <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/80 to-transparent" />
             </div>
             <div className="relative z-10 text-heading-text max-w-xl">
-              <h3 className="text-4xl mb-6 font-display tracking-wider">About Vanguard</h3>
+              <h3 className="text-4xl mb-6 font-display tracking-wider">About TheBarberShop</h3>
               <p className="text-neutral-300 leading-relaxed font-light">
-                Founded in the heart of the city, Vanguard was born from a desire to return to the roots of masculine grooming. Our master barbers are artists, dedicated to the precision and detail that defines a true gentleman. We blend old-world tradition with new-school execution.
+                Founded in the heart of the city, TheBarberShop was born from a desire to return to the roots of masculine grooming. Our master barbers are artists, dedicated to the precision and detail that defines a true gentleman. We blend old-world tradition with new-school execution.
               </p>
             </div>
           </motion.div>

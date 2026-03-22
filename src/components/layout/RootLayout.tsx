@@ -49,7 +49,7 @@ const Header = () => {
             to="/"
             className="text-lg md:text-2xl font-display tracking-[0.3em] text-[#c4a15a] hover:text-[#d4b56a] transition-colors"
           >
-            VANGUARD
+            THEBARBERSHOP
           </Link>
 
           {/* Desktop nav */}
@@ -98,7 +98,7 @@ const Header = () => {
           to="/"
           className="text-lg font-display tracking-[0.3em] text-[#c4a15a] mb-12"
         >
-          VANGUARD
+          THEBARBERSHOP
         </Link>
         <nav className="flex flex-col gap-6">
           {navLinks.map(link => (
@@ -167,12 +167,12 @@ export const RootLayout = () => {
       </main>
 
       <Footer
-        brandName="VANGUARD"
+        brandName="THEBARBERSHOP"
         brandDescription="The sanctuary for the modern gentleman. Elevating the craft of grooming globally."
         socialLinks={socialLinks}
         navLinks={footerNavLinks}
-        creatorName="Vanguard Studios"
-        creatorUrl="https://vanguardgrooming.com"
+        creatorName="TheBarberShop Studio"
+        creatorUrl="https://thebarbershop.com"
         brandIcon={<Scissors className="w-8 sm:w-10 md:w-14 h-8 sm:h-10 md:h-14 text-background drop-shadow-lg" />}
       />
     </div>

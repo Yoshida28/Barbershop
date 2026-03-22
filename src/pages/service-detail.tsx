@@ -18,7 +18,7 @@ const SERVICES: Service[] = [
   { title: "Executive Haircut", price: "$65", description: "Precision cut with hot towel finish.", category: 'Hair', image: "https://images.pexels.com/photos/1319459/pexels-photo-1319459.jpeg?auto=compress&cs=tinysrgb&w=800", duration: "45 min" },
   { title: "Signature Beard Trim", price: "$40", description: "Sculpting and conditioning treatment.", category: 'Beard', image: "https://images.pexels.com/photos/3998429/pexels-photo-3998429.jpeg?auto=compress&cs=tinysrgb&w=800", duration: "30 min" },
   { title: "Classic Hot Shave", price: "$50", description: "Traditional straight razor experience.", category: 'Grooming', image: "https://images.pexels.com/photos/2080006/pexels-photo-2080006.jpeg?auto=compress&cs=tinysrgb&w=800", duration: "40 min" },
-  { title: "The Vanguard Package", price: "$120", description: "Full hair, beard, and facial treatment.", category: 'Premium', image: "https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=800", duration: "90 min" },
+  { title: "The TheBarberShop Package", price: "$120", description: "Full hair, beard, and facial treatment.", category: 'Premium', image: "https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=800", duration: "90 min" },
   { title: "Scalp Therapy", price: "$35", description: "Invigorating massage and deep conditioning.", category: 'Hair', image: "https://images.pexels.com/photos/2040050/pexels-photo-2040050.jpeg?auto=compress&cs=tinysrgb&w=800", duration: "30 min" },
   { title: "Grey Blending", price: "$45", description: "Subtle, natural color integration.", category: 'Premium', image: "https://images.pexels.com/photos/1570806/pexels-photo-1570806.jpeg?auto=compress&cs=tinysrgb&w=800", duration: "45 min" },
 ];
@@ -85,7 +85,7 @@ export default function ServiceDetail() {
                 {service.title}
               </h1>
               <p className="text-lg leading-relaxed text-body-text font-light">
-                {service.description} Experience the mastery of Vanguard barbers with an appointment dedicated entirely to your personal style and grooming needs.
+                {service.description} Experience the mastery of TheBarberShop barbers with an appointment dedicated entirely to your personal style and grooming needs.
               </p>
             </div>
             

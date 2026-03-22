@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 /**
  * Slideshow component representing the hero section.
- * Using high-quality Unsplash images for the Vanguard brand.
+ * Using high-quality Unsplash images for the TheBarberShop brand.
  */
 const slides = [
   {
