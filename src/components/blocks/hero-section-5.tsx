@@ -79,7 +79,7 @@ export function HeroSection() {
                                     }
                                 }}
                             >
-                                <source src="/src/public/herovideo.mp4" type="video/mp4" />
+                                <source src="/herovideo.mp4" type="video/mp4" />
                             </video>
                             {/* Vignette + directional gradient keep hero copy readable */}
                             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(0,0,0,0.55)_100%)]"></div>
