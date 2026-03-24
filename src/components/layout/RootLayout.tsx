@@ -11,8 +11,8 @@ const navLinks = [
   { label: 'Shop', href: '/products' },
   { label: 'Gallery', href: '/gallery' },
   { label: 'Locations', href: '/locations' },
-  { label: 'Career', href: '/contact' },
-  { label: 'Franchise', href: '/contact' },
+  { label: 'Career', href: '/career' },
+  { label: 'Franchise', href: '/franchise' },
   { label: 'Contact', href: '/contact' },
 ];
 
@@ -143,7 +143,7 @@ const socialLinks = [
 const footerNavLinks = [
   { label: "Privacy Policy", href: "/contact" },
   { label: "Terms of Service", href: "/contact" },
-  { label: "Career Opportunities", href: "/contact" },
+  { label: "Career Opportunities", href: "/career" },
 ];
 
 export const RootLayout = () => {
