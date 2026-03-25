@@ -1,61 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Instagram, Facebook, Twitter, Phone, Mail, MapPin, 
-  ChevronRight, ArrowRight, Scissors, Award, Star
+import {
+  Instagram, Facebook, Twitter, Phone, Mail, MapPin,
+  ChevronRight, ArrowRight, Scissors, Award, Star, Paperclip, X as XIcon
 } from 'lucide-react';
 import { HeroSection } from '../components/blocks/hero-section-5';
 import ElegantCarousel from '../components/ui/elegant-carousel';
 import { SmokeBackground } from '../components/ui/spooky-smoke-animation';
 import { ImageAutoSlider } from '../components/ui/image-auto-slider';
 import { LocationSelectors } from '../components/ui/location-selectors';
+import { supabase } from '../lib/supabase';
+import type { Service, Product, RateCardItem, GalleryItem, MediaItem, FranchiseInfo } from '../lib/supabase';
+import { FeatureSteps } from '../components/ui/feature-section';
 
-// --- Types ---
-interface Service {
-  title: string;
-  price: string;
-  description: string;
-  category: 'Hair' | 'Beard' | 'Skin' | 'Nail' | 'Makeup' | 'Combo';
-  image: string;
-}
-
-interface Product {
-  name: string;
-  price: string;
-  image: string;
-}
-
-// --- Data ---
-const SERVICES: Service[] = [
-  { title: "Executive Haircut", price: "$65", description: "Precision cut with hot towel finish.", category: 'Hair', image: "https://images.pexels.com/photos/1319459/pexels-photo-1319459.jpeg?auto=compress&cs=tinysrgb&w=800" },
-  { title: "Signature Beard Trim", price: "$40", description: "Sculpting and conditioning treatment.", category: 'Beard', image: "https://images.pexels.com/photos/3998429/pexels-photo-3998429.jpeg?auto=compress&cs=tinysrgb&w=800" },
-  { title: "Classic Hot Shave", price: "$50", description: "Traditional straight razor experience.", category: 'Skin', image: "https://images.pexels.com/photos/2080006/pexels-photo-2080006.jpeg?auto=compress&cs=tinysrgb&w=800" },
-  { title: "The TheBarberShop Package", price: "$120", description: "Full hair, beard, and facial treatment.", category: 'Combo', image: "https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=800" },
-  { title: "Scalp Therapy", price: "$35", description: "Invigorating massage and deep conditioning.", category: 'Hair', image: "https://images.pexels.com/photos/2040050/pexels-photo-2040050.jpeg?auto=compress&cs=tinysrgb&w=800" },
-  { title: "Grey Blending", price: "$45", description: "Subtle, natural color integration.", category: 'Makeup', image: "https://images.pexels.com/photos/1570806/pexels-photo-1570806.jpeg?auto=compress&cs=tinysrgb&w=800" },
-];
-
-const PRODUCTS: Product[] = [
-  { name: "Matte Clay", price: "$28", image: "https://images.pexels.com/photos/4587635/pexels-photo-4587635.jpeg?auto=compress&cs=tinysrgb&w=400" },
-  { name: "Beard Oil", price: "$32", image: "https://images.pexels.com/photos/672629/pexels-photo-672629.jpeg?auto=compress&cs=tinysrgb&w=400" },
-  { name: "Sea Salt Spray", price: "$24", image: "https://images.pexels.com/photos/4465121/pexels-photo-4465121.jpeg?auto=compress&cs=tinysrgb&w=400" },
-];
-
-const MERCHANDISE: Product[] = [
-  { name: "TheBarberShop Tee", price: "$45", image: "https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=400" },
-  { name: "Leather Apron", price: "$180", image: "https://images.pexels.com/photos/3389531/pexels-photo-3389531.jpeg?auto=compress&cs=tinysrgb&w=400" },
-  { name: "Steel Comb", price: "$35", image: "https://images.pexels.com/photos/10153406/pexels-photo-10153406.jpeg?auto=compress&cs=tinysrgb&w=400" },
-];
-
-const GALLERY_IMAGES = [
-  "https://images.pexels.com/photos/1319459/pexels-photo-1319459.jpeg?auto=compress&cs=tinysrgb&w=800",
-  "https://images.pexels.com/photos/3998429/pexels-photo-3998429.jpeg?auto=compress&cs=tinysrgb&w=800",
-  "https://images.pexels.com/photos/2080006/pexels-photo-2080006.jpeg?auto=compress&cs=tinysrgb&w=800",
-  "https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=800",
-  "https://images.pexels.com/photos/2040050/pexels-photo-2040050.jpeg?auto=compress&cs=tinysrgb&w=800",
-  "https://images.pexels.com/photos/1570806/pexels-photo-1570806.jpeg?auto=compress&cs=tinysrgb&w=800",
-];
 
 // --- Components ---
 
@@ -143,23 +101,27 @@ const AboutVisionMission = () => (
 );
 
 const Services = () => {
-  const [activeCategory, setActiveCategory] = useState<'All' | 'Hair' | 'Beard' | 'Skin' | 'Nail' | 'Makeup' | 'Combo'>('All');
-  
-  const filteredServices = activeCategory === 'All' 
-    ? SERVICES 
-    : SERVICES.filter(s => s.category === activeCategory);
+  const [services, setServices] = useState<Service[]>([]);
+  const [activeCategory, setActiveCategory] = useState('All');
+
+  useEffect(() => {
+    supabase.from('services').select('*').order('sort_order').then(({ data }) => {
+      setServices(data || []);
+    });
+  }, []);
+
+  const categories = ['All', ...Array.from(new Set(services.map(s => s.category).filter(Boolean)))];
+  const filtered = activeCategory === 'All' ? services : services.filter(s => s.category === activeCategory);
 
   return (
     <section id="services" className="py-16 md:py-24 px-5 md:px-6 bg-secondary-bg">
       <div className="max-w-7xl mx-auto">
         <SectionHeading title="Our Services" subtitle="Expertise" />
-        
-        {/* Filter - scrollable on mobile */}
         <div className="flex flex-wrap gap-3 mb-10 md:mb-12">
-          {['All', 'Hair', 'Beard', 'Skin', 'Nail', 'Makeup', 'Combo'].map((cat) => (
+          {categories.map((cat) => (
             <button
               key={cat}
-              onClick={() => setActiveCategory(cat as any)}
+              onClick={() => setActiveCategory(cat)}
               className={`px-4 md:px-6 py-2 text-xs uppercase tracking-widest border transition-all rounded-full ${
                 activeCategory === cat
                   ? 'bg-primary-bg text-heading-text border-primary border-solid'
@@ -170,25 +132,28 @@ const Services = () => {
             </button>
           ))}
         </div>
-
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredServices.length > 0 ? (
-            filteredServices.map((service, idx) => (
-              <Link to={`/services/${service.title.toLowerCase().replace(/\\s+/g, '-')}`} key={service.title} className="block">
-                <motion.div 
+          {filtered.length > 0 ? (
+            filtered.map((service, idx) => (
+              <Link to={`/services/${service.id}`} key={service.id} className="block">
+                <motion.div
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
                   transition={{ delay: idx * 0.1 }}
                   className="group relative aspect-square overflow-hidden rounded-xl bg-primary-bg-bg"
                 >
-                  <img 
-                    src={service.image} 
-                    alt={service.title} 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    style={{ filter: 'contrast(1.15) brightness(1.05) saturate(1.1)' }}
-                    referrerPolicy="no-referrer"
-                  />
+                  {service.image_url ? (
+                    <img
+                      src={service.image_url}
+                      alt={service.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-secondary-bg flex items-center justify-center">
+                      <Scissors size={40} className="text-white/10" />
+                    </div>
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8 text-heading-text">
                     <p className="text-xs uppercase tracking-widest mb-2 opacity-70">{service.category}</p>
                     <h4 className="text-3xl mb-1 font-display uppercase">{service.title}</h4>
@@ -200,7 +165,7 @@ const Services = () => {
             ))
           ) : (
             <div className="col-span-full py-20 text-center">
-              <p className="text-muted-text text-xs uppercase tracking-widest">No services found in this category.</p>
+              <p className="text-muted-text text-xs uppercase tracking-widest">Loading services…</p>
             </div>
           )}
         </div>
@@ -209,115 +174,114 @@ const Services = () => {
   );
 };
 
-const ProductsMerch = () => (
-  <section id="products" className="py-16 md:py-24 px-5 md:px-6 bg-primary-bg-bg">
-    <div className="max-w-7xl mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24">
-        {/* Products */}
-        <div>
-          <SectionHeading title="Apothecary" subtitle="Premium Products" />
-          <div className="grid grid-cols-1 gap-8 md:gap-12">
-            {PRODUCTS.length > 0 ? (
-              PRODUCTS.map((product) => (
-                <div key={product.name} className="flex gap-5 md:gap-8 items-center group">
-                  <div className="w-20 h-20 md:w-32 md:h-32 flex-shrink-0 overflow-hidden bg-secondary-bg rounded-lg">
-                    <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" style={{ filter: 'contrast(1.12) brightness(1.06) saturate(1.1)' }} referrerPolicy="no-referrer" />
-                  </div>
-                  <div className="flex-1 border-b border-white/10 border-solid pb-4">
-                    <div className="flex justify-between items-end mb-2">
-                      <h4 className="text-lg md:text-2xl font-display uppercase">{product.name}</h4>
-                      <span className="text-base md:text-lg font-display">{product.price}</span>
-                    </div>
-                    <button className="text-xs uppercase tracking-widest font-bold flex items-center gap-2 hover:gap-4 transition-all">
-                      Add to Cart <ArrowRight size={12} />
-                    </button>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="text-muted-text text-xs uppercase tracking-widest py-8">Our apothecary is currently being restocked.</p>
-            )}
-          </div>
-        </div>
+const ProductsMerch = () => {
+  const [products, setProducts] = useState<Product[]>([]);
 
-        {/* Merchandise */}
-        <div>
-          <SectionHeading title="Dry Goods" subtitle="Merchandise" />
-          <div className="grid grid-cols-1 gap-8 md:gap-12">
-            {MERCHANDISE.length > 0 ? (
-              MERCHANDISE.map((item) => (
-                <div key={item.name} className="flex gap-5 md:gap-8 items-center group">
-                  <div className="w-20 h-20 md:w-32 md:h-32 flex-shrink-0 overflow-hidden bg-secondary-bg rounded-lg">
-                    <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" style={{ filter: 'contrast(1.12) brightness(1.06) saturate(1.1)' }} referrerPolicy="no-referrer" />
-                  </div>
-                  <div className="flex-1 border-b border-white/10 border-solid pb-4">
-                    <div className="flex justify-between items-end mb-2">
-                      <h4 className="text-lg md:text-2xl font-display uppercase">{item.name}</h4>
-                      <span className="text-base md:text-lg font-display">{item.price}</span>
-                    </div>
-                    <button className="text-xs uppercase tracking-widest font-bold flex items-center gap-2 hover:gap-4 transition-all">
-                      Add to Cart <ArrowRight size={12} />
-                    </button>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="text-muted-text text-xs uppercase tracking-widest py-8">Merchandise is currently unavailable.</p>
-            )}
+  useEffect(() => {
+    supabase.from('products').select('*').order('sort_order').then(({ data }) => {
+      setProducts(data || []);
+    });
+  }, []);
+
+  // Split by category: non-Merchandise = Apothecary, Merchandise = Dry Goods
+  const apothecary = products.filter(p => p.category !== 'Merchandise').slice(0, 6);
+  const merchandise = products.filter(p => p.category === 'Merchandise').slice(0, 6);
+
+  const ProductRow = ({ item }: { item: Product }) => (
+    <div className="flex gap-5 md:gap-8 items-center group">
+      <div className="w-20 h-20 md:w-32 md:h-32 flex-shrink-0 overflow-hidden bg-secondary-bg rounded-lg">
+        {item.image_url ? (
+          <img src={item.image_url} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+        ) : (
+          <div className="w-full h-full bg-secondary-bg" />
+        )}
+      </div>
+      <div className="flex-1 border-b border-white/10 border-solid pb-4">
+        <div className="flex justify-between items-end mb-2">
+          <h4 className="text-lg md:text-2xl font-display uppercase">{item.name}</h4>
+          <span className="text-base md:text-lg font-display">{item.price}</span>
+        </div>
+        <Link to="/products" className="text-xs uppercase tracking-widest font-bold flex items-center gap-2 hover:gap-4 transition-all">
+          View Details <ArrowRight size={12} />
+        </Link>
+      </div>
+    </div>
+  );
+
+  return (
+    <section id="products" className="py-16 md:py-24 px-5 md:px-6 bg-primary-bg-bg">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24">
+          <div>
+            <SectionHeading title="Apothecary" subtitle="Premium Products" />
+            <div className="grid grid-cols-1 gap-8 md:gap-12">
+              {apothecary.length > 0 ? apothecary.map(p => <ProductRow key={p.id} item={p} />) : (
+                <p className="text-muted-text text-xs uppercase tracking-widest py-8">Our apothecary is currently being restocked.</p>
+              )}
+            </div>
+          </div>
+          <div>
+            <SectionHeading title="Dry Goods" subtitle="Merchandise" />
+            <div className="grid grid-cols-1 gap-8 md:gap-12">
+              {merchandise.length > 0 ? merchandise.map(p => <ProductRow key={p.id} item={p} />) : (
+                <p className="text-muted-text text-xs uppercase tracking-widest py-8">Merchandise is currently unavailable.</p>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
-const RateCard = () => (
-  <section id="rate-card" className="py-16 md:py-24 px-5 md:px-6 bg-primary-bg text-heading-text">
-    <div className="max-w-4xl mx-auto">
-      <div className="text-center mb-12 md:mb-16">
-        <p className="text-xs uppercase tracking-[0.4em] text-body-text mb-4">Investment</p>
-        <h2 className="text-5xl md:text-8xl font-display uppercase">Rate Card</h2>
-      </div>
-      
-      <div className="space-y-8">
-        {[
-          { category: 'Hair', items: [{ n: 'Executive Cut', p: '$65' }, { n: 'Clipper Cut', p: '$45' }, { n: 'Grey Blending', p: '$45' }] },
-          { category: 'Beard', items: [{ n: 'Signature Trim', p: '$40' }, { n: 'Hot Razor Shave', p: '$55' }, { n: 'Beard Conditioning', p: '$25' }] },
-          { category: 'Combos', items: [{ n: 'The TheBarberShop', p: '$120' }, { n: 'Cut & Shave', p: '$100' }] },
-        ].map((group) => (
-          <div key={group.category} className="space-y-4">
-            <h5 className="text-xs uppercase tracking-widest text-body-text border-b border-white/10 border-solid pb-2">{group.category}</h5>
-            {group.items.map((item) => (
-              <div key={item.n} className="flex justify-between items-end group cursor-default">
-                <span className="text-lg md:text-2xl uppercase tracking-wide group-hover:translate-x-2 transition-transform font-display">{item.n}</span>
-                <div className="flex-1 border-b border-dashed border-white/10 mx-4 mb-2 border-solid" />
-                <span className="text-lg md:text-2xl font-display">{item.p}</span>
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
+const RateCard = () => {
+  const [rateItems, setRateItems] = useState<RateCardItem[]>([]);
 
-      <div className="mt-12 md:mt-16 text-center">
-        <p className="text-xs text-body-text uppercase tracking-widest mb-8">All services include a complimentary beverage and consultation.</p>
-        <button className="bg-primary-bg-bg text-heading-text px-8 md:px-12 py-4 text-xs uppercase tracking-[0.2em] font-bold hover:bg-white/5 transition-colors w-full md:w-auto">
-          Download PDF Menu
-        </button>
-      </div>
-    </div>
-  </section>
-);
+  useEffect(() => {
+    supabase.from('rate_card').select('*').order('sort_order').then(({ data }) => {
+      setRateItems(data || []);
+    });
+  }, []);
 
-const ARCHIVE_IMAGES = [
-  'https://images.pexels.com/photos/1319459/pexels-photo-1319459.jpeg?auto=compress&cs=tinysrgb&w=800',
-  'https://images.pexels.com/photos/3998429/pexels-photo-3998429.jpeg?auto=compress&cs=tinysrgb&w=800',
-  'https://images.pexels.com/photos/2080006/pexels-photo-2080006.jpeg?auto=compress&cs=tinysrgb&w=800',
-  'https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=800',
-  'https://images.pexels.com/photos/2040050/pexels-photo-2040050.jpeg?auto=compress&cs=tinysrgb&w=800',
-  'https://images.pexels.com/photos/1570806/pexels-photo-1570806.jpeg?auto=compress&cs=tinysrgb&w=800',
-  'https://images.pexels.com/photos/668196/pexels-photo-668196.jpeg?auto=compress&cs=tinysrgb&w=800',
-  'https://images.pexels.com/photos/1805600/pexels-photo-1805600.jpeg?auto=compress&cs=tinysrgb&w=800',
-];
+  // Group by category
+  const groups = rateItems.reduce<Record<string, RateCardItem[]>>((acc, item) => {
+    const cat = item.category || 'General';
+    if (!acc[cat]) acc[cat] = [];
+    acc[cat].push(item);
+    return acc;
+  }, {});
+
+  return (
+    <section id="rate-card" className="py-16 md:py-24 px-5 md:px-6 bg-primary-bg text-heading-text">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-12 md:mb-16">
+          <p className="text-xs uppercase tracking-[0.4em] text-body-text mb-4">Investment</p>
+          <h2 className="text-5xl md:text-8xl font-display uppercase">Rate Card</h2>
+        </div>
+        <div className="space-y-8">
+          {Object.entries(groups).map(([cat, items]) => (
+            <div key={cat} className="space-y-4">
+              <h5 className="text-xs uppercase tracking-widest text-body-text border-b border-white/10 border-solid pb-2">{cat}</h5>
+              {items.map((item) => (
+                <div key={item.id} className="flex justify-between items-end group cursor-default">
+                  <span className="text-lg md:text-2xl uppercase tracking-wide group-hover:translate-x-2 transition-transform font-display">{item.service_name}</span>
+                  <div className="flex-1 border-b border-dashed border-white/10 mx-4 mb-2 border-solid" />
+                  <span className="text-lg md:text-2xl font-display">{item.price}</span>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+        <div className="mt-12 md:mt-16 text-center">
+          <p className="text-xs text-body-text uppercase tracking-widest mb-8">All services include a complimentary beverage and consultation.</p>
+          <Link to="/services" className="inline-block bg-primary-bg-bg text-heading-text px-8 md:px-12 py-4 text-xs uppercase tracking-[0.2em] font-bold hover:bg-white/5 transition-colors w-full md:w-auto">
+            View Full Services
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+};
 
 // Flash overlay for gallery navigation
 const GalleryFlash = ({ active }: { active: boolean }) => (
@@ -335,9 +299,24 @@ const GalleryFlash = ({ active }: { active: boolean }) => (
   </AnimatePresence>
 );
 
+const FALLBACK_GALLERY = [
+  'https://images.pexels.com/photos/1319459/pexels-photo-1319459.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'https://images.pexels.com/photos/3998429/pexels-photo-3998429.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'https://images.pexels.com/photos/2080006/pexels-photo-2080006.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=800',
+];
+
 const Gallery = () => {
   const navigate = useNavigate();
   const [flashing, setFlashing] = useState(false);
+  const [galleryImages, setGalleryImages] = useState<string[]>([]);
+
+  useEffect(() => {
+    supabase.from('gallery_items').select('image_url').order('sort_order').limit(12).then(({ data }) => {
+      const urls = (data || []).map((g: GalleryItem) => g.image_url).filter(Boolean);
+      setGalleryImages(urls.length > 0 ? urls : FALLBACK_GALLERY);
+    });
+  }, []);
 
   const handleGalleryNav = () => {
     setFlashing(true);
@@ -348,7 +327,7 @@ const Gallery = () => {
     <section id="gallery" className="bg-[#0b0a08] relative">
       <GalleryFlash active={flashing} />
       <ImageAutoSlider
-        images={ARCHIVE_IMAGES}
+        images={galleryImages.length > 0 ? galleryImages : FALLBACK_GALLERY}
         title="The Archive"
         subtitle="Visuals"
         speed={38}
@@ -358,34 +337,30 @@ const Gallery = () => {
   );
 };
 
-import { FeatureSteps } from '../components/ui/feature-section';
-
-const MEDIA_FEATURES = [
-  { 
-    step: 'Oct 12, 2025', 
-    title: 'New London Flagship',
-    content: 'TheBarberShop opens its most ambitious location yet on Savile Row, bridging the gap between traditional tailoring and modern grooming.', 
-    image: 'https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=1200' 
-  },
-  { 
-    step: 'Sep 05, 2025',
-    title: 'The Evolution of Craft',
-    content: 'A deep dive into how our master barbers are evolving centuries-old techniques for the 21st-century gentleman.',
-    image: 'https://images.pexels.com/photos/3998429/pexels-photo-3998429.jpeg?auto=compress&cs=tinysrgb&w=1200'
-  },
-  { 
-    step: 'Aug 20, 2025',
-    title: 'Partnership with Baxter',
-    content: 'TheBarberShop is proud to announce an exclusive partnership with Baxter of California, bringing luxury apothecary to all locations.',
-    image: 'https://images.pexels.com/photos/4587635/pexels-photo-4587635.jpeg?auto=compress&cs=tinysrgb&w=1200'
-  },
-];
-
 const MediaCenter = () => {
+  const [features, setFeatures] = useState<{ step: string; title: string; content: string; image: string }[]>([]);
+
+  useEffect(() => {
+    supabase.from('media_items').select('*').order('published_at', { ascending: false }).limit(3).then(({ data }) => {
+      const mapped = (data || []).map((m: MediaItem) => ({
+        step: new Date(m.published_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+        title: m.title,
+        content: m.description || '',
+        image: m.media_url || 'https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      }));
+      setFeatures(mapped.length > 0 ? mapped : [
+        { step: 'Oct 12, 2025', title: 'New London Flagship', content: 'TheBarberShop opens its most ambitious location yet on Savile Row.', image: 'https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+        { step: 'Sep 05, 2025', title: 'The Evolution of Craft', content: 'A deep dive into how our master barbers evolve centuries-old techniques.', image: 'https://images.pexels.com/photos/3998429/pexels-photo-3998429.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+      ]);
+    });
+  }, []);
+
+  if (features.length === 0) return null;
+
   return (
     <section className="py-24 bg-secondary-bg">
-      <FeatureSteps 
-        features={MEDIA_FEATURES}
+      <FeatureSteps
+        features={features}
         title="Media Center"
         autoPlayInterval={5000}
         imageHeight="h-[600px]"
@@ -394,8 +369,71 @@ const MediaCenter = () => {
   );
 };
 
+const MAX_ATTACH_FILES = 5;
+const MAX_ATTACH_MB = 5;
+
+async function uploadAttachments(files: File[]): Promise<string[]> {
+  const urls: string[] = [];
+  for (const file of files) {
+    const path = `submissions/${crypto.randomUUID()}-${file.name}`;
+    const { error } = await supabase.storage.from('attachments').upload(path, file, { upsert: false });
+    if (!error) {
+      const { data } = supabase.storage.from('attachments').getPublicUrl(path);
+      urls.push(data.publicUrl);
+    }
+  }
+  return urls;
+}
+
 const ContactSection = () => {
   const [activeTab, setActiveTab] = useState<'general' | 'franchise' | 'career'>('general');
+  const [franchiseStats, setFranchiseStats] = useState<FranchiseInfo[]>([]);
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
+  const [attachments, setAttachments] = useState<File[]>([]);
+  const [attachError, setAttachError] = useState('');
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+
+  useEffect(() => {
+    supabase.from('franchise_info').select('*').order('sort_order').then(({ data }) => {
+      setFranchiseStats(data || []);
+    });
+  }, []);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAttachError('');
+    const selected = Array.from(e.target.files || []);
+    const combined = [...attachments, ...selected];
+    if (combined.length > MAX_ATTACH_FILES) { setAttachError(`Max ${MAX_ATTACH_FILES} files allowed.`); return; }
+    const oversized = selected.find(f => f.size > MAX_ATTACH_MB * 1024 * 1024);
+    if (oversized) { setAttachError(`Each file must be under ${MAX_ATTACH_MB}MB.`); return; }
+    setAttachments(combined.slice(0, MAX_ATTACH_FILES));
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const removeFile = (idx: number) => setAttachments(prev => prev.filter((_, i) => i !== idx));
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitStatus('sending');
+    const attachmentUrls = attachments.length > 0 ? await uploadAttachments(attachments) : [];
+    const { error } = await supabase.from('contact_submissions').insert({
+      type: activeTab,
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone || null,
+      message: formData.message || null,
+      attachments: attachmentUrls.length > 0 ? attachmentUrls : null,
+    });
+    if (error) {
+      setSubmitStatus('error');
+    } else {
+      setSubmitStatus('sent');
+      setFormData({ name: '', email: '', phone: '', message: '' });
+      setAttachments([]);
+      setTimeout(() => setSubmitStatus('idle'), 4000);
+    }
+  };
 
   const tabConfig = {
     general: { label: 'General', title: 'Get in Touch', subtitle: 'Contact', buttonText: 'Send Message' },
@@ -460,14 +498,8 @@ const ContactSection = () => {
                   We are looking for partners who share our passion for excellence and tradition. Bring the TheBarberShop experience to your city.
                 </p>
                 <div className="grid grid-cols-2 gap-x-8 gap-y-6">
-                  {[
-                    { label: 'Franchisee Fee', value: '₹3L' },
-                    { label: 'Area Required', value: '300 sqft' },
-                    { label: 'Investment', value: '₹17.5L onwards' },
-                    { label: 'Royalty', value: '₹30K + GST PM' },
-                    { label: 'ROI', value: '24 Months' },
-                  ].map((item) => (
-                    <div key={item.label} className="border-l-2 border-primary pl-4">
+                  {franchiseStats.map((item) => (
+                    <div key={item.key} className="border-l-2 border-primary pl-4">
                       <p className="text-xs uppercase tracking-widest text-muted-text mb-1">{item.label}</p>
                       <p className="text-lg md:text-xl font-display uppercase">{item.value}</p>
                     </div>
@@ -490,18 +522,38 @@ const ContactSection = () => {
           </div>
 
           {/* Right — Form */}
-          <form className="bg-primary-bg-bg p-6 md:p-12 space-y-5 shadow-2xl rounded-xl" onSubmit={(e) => e.preventDefault()}>
-            <div className="space-y-2"><label className="text-xs uppercase tracking-widest font-bold">Name</label><input type="text" className="w-full bg-transparent border border-primary border-solid p-3 md:p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" /></div>
+          <form className="bg-primary-bg-bg p-6 md:p-12 space-y-5 shadow-2xl rounded-xl" onSubmit={handleSubmit}>
+            <div className="space-y-2"><label className="text-xs uppercase tracking-widest font-bold">Name *</label><input required type="text" value={formData.name} onChange={e => setFormData(p => ({...p, name: e.target.value}))} className="w-full bg-transparent border border-primary border-solid p-3 md:p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" /></div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-              <div className="space-y-2"><label className="text-xs uppercase tracking-widest font-bold">Email</label><input type="email" className="w-full bg-transparent border border-primary border-solid p-3 md:p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" /></div>
-              <div className="space-y-2"><label className="text-xs uppercase tracking-widest font-bold">Phone Number</label><input type="tel" className="w-full bg-transparent border border-primary border-solid p-3 md:p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" /></div>
+              <div className="space-y-2"><label className="text-xs uppercase tracking-widest font-bold">Email *</label><input required type="email" value={formData.email} onChange={e => setFormData(p => ({...p, email: e.target.value}))} className="w-full bg-transparent border border-primary border-solid p-3 md:p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" /></div>
+              <div className="space-y-2"><label className="text-xs uppercase tracking-widest font-bold">Phone Number</label><input type="tel" value={formData.phone} onChange={e => setFormData(p => ({...p, phone: e.target.value}))} className="w-full bg-transparent border border-primary border-solid p-3 md:p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" /></div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-              <LocationSelectors variant="outline" />
+            <div className="space-y-2"><label className="text-xs uppercase tracking-widest font-bold">Message</label><textarea rows={4} value={formData.message} onChange={e => setFormData(p => ({...p, message: e.target.value}))} className="w-full bg-transparent border border-primary border-solid p-3 md:p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" /></div>
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs uppercase tracking-widest font-bold text-body-text">Attachments (max {MAX_ATTACH_FILES}, {MAX_ATTACH_MB}MB each)</span>
+                <button type="button" onClick={() => fileInputRef.current?.click()} disabled={attachments.length >= MAX_ATTACH_FILES}
+                  className="flex items-center gap-1 text-xs uppercase tracking-widest font-bold border border-white/20 px-3 py-1.5 hover:bg-white/5 transition-colors disabled:opacity-40">
+                  <Paperclip size={12} /> Attach
+                </button>
+              </div>
+              <input ref={fileInputRef} type="file" multiple className="hidden" onChange={handleFileChange} />
+              {attachments.length > 0 && (
+                <ul className="space-y-1 mt-2">
+                  {attachments.map((f, i) => (
+                    <li key={i} className="flex items-center justify-between text-xs text-body-text bg-white/5 px-3 py-1.5 rounded">
+                      <span className="truncate max-w-50">{f.name}</span>
+                      <button type="button" onClick={() => removeFile(i)} className="ml-2 text-muted-text hover:text-heading-text"><XIcon size={12} /></button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {attachError && <p className="text-red-400 text-xs mt-1">{attachError}</p>}
             </div>
-            <div className="space-y-2"><label className="text-xs uppercase tracking-widest font-bold">Message</label><textarea rows={4} className="w-full bg-transparent border border-primary border-solid p-3 md:p-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all font-sans" /></div>
-            <button className="bg-primary-bg text-heading-text w-full py-4 md:py-5 text-xs uppercase tracking-[0.3em] font-bold hover:bg-neutral-800 transition-colors">
-              {config.buttonText}
+            {submitStatus === 'sent' && <p className="text-green-400 text-xs uppercase tracking-widest">✓ Message sent successfully!</p>}
+            {submitStatus === 'error' && <p className="text-red-400 text-xs uppercase tracking-widest">Something went wrong. Please try again.</p>}
+            <button type="submit" disabled={submitStatus === 'sending'} className="bg-primary-bg text-heading-text w-full py-4 md:py-5 text-xs uppercase tracking-[0.3em] font-bold hover:bg-neutral-800 transition-colors disabled:opacity-60">
+              {submitStatus === 'sending' ? 'Sending…' : config.buttonText}
             </button>
           </form>
         </motion.div>

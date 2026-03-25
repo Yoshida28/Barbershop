@@ -8,7 +8,7 @@ import type {
 import {
   LogOut, Scissors, ShoppingBag, List, MapPin, Image, Film,
   Globe, MessageSquare, LayoutDashboard, Plus, Pencil, Trash2,
-  ChevronDown, ChevronUp, Eye, EyeOff,
+  ChevronDown, ChevronUp, Eye, EyeOff, Upload, X as XIcon, Loader2, Paperclip,
 } from 'lucide-react';
 
 // ─── Shared helpers ───────────────────────────────────────────────────────────
@@ -63,6 +63,104 @@ const Select = ({ label, value, onChange, options }: {
 const Card = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
   <div className={`bg-[#13110d] border border-white/8 rounded-sm p-6 ${className}`}>{children}</div>
 );
+
+// ─── Image Upload ─────────────────────────────────────────────────────────────
+
+const BUCKET = 'images';
+
+function ImageUpload({
+  label,
+  value,
+  onChange,
+  folder = 'general',
+}: {
+  label: string;
+  value: string;
+  onChange: (url: string) => void;
+  folder?: string;
+}) {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState('');
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setError('');
+    try {
+      const ext = file.name.split('.').pop();
+      const path = `${folder}/${crypto.randomUUID()}.${ext}`;
+      const { error: upErr } = await supabase.storage.from(BUCKET).upload(path, file, { upsert: true });
+      if (upErr) throw upErr;
+      const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
+      onChange(data.publicUrl);
+    } catch (err: any) {
+      setError(err.message || 'Upload failed');
+    } finally {
+      setUploading(false);
+      if (inputRef.current) inputRef.current.value = '';
+    }
+  };
+
+  const handleRemove = async () => {
+    if (!value) return;
+    // Extract path after /object/public/images/
+    try {
+      const url = new URL(value);
+      const parts = url.pathname.split(`/object/public/${BUCKET}/`);
+      if (parts[1]) {
+        await supabase.storage.from(BUCKET).remove([decodeURIComponent(parts[1])]);
+      }
+    } catch (_) { /* ignore */ }
+    onChange('');
+  };
+
+  return (
+    <div className="flex flex-col gap-1">
+      <label className="text-[10px] uppercase tracking-widest text-[#7f6738] font-bold">{label}</label>
+      {value ? (
+        <div className="relative w-full h-32 rounded overflow-hidden border border-white/10 group">
+          <img src={value} alt="Preview" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+            <button
+              type="button"
+              onClick={() => inputRef.current?.click()}
+              className="bg-[#c4a15a] text-black text-[10px] uppercase tracking-widest font-bold px-3 py-1.5 rounded flex items-center gap-1"
+            >
+              <Upload size={10} /> Replace
+            </button>
+            <button
+              type="button"
+              onClick={handleRemove}
+              className="bg-red-800/80 text-red-300 text-[10px] uppercase tracking-widest font-bold px-3 py-1.5 rounded flex items-center gap-1"
+            >
+              <XIcon size={10} /> Remove
+            </button>
+          </div>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          disabled={uploading}
+          className="h-24 border border-dashed border-white/20 rounded flex flex-col items-center justify-center gap-2 text-[#7f6738] hover:border-[#c4a15a]/40 hover:text-[#c4a15a] transition-colors disabled:opacity-50"
+        >
+          {uploading ? (
+            <span className="text-[10px] uppercase tracking-widest">Uploading…</span>
+          ) : (
+            <>
+              <Upload size={18} />
+              <span className="text-[10px] uppercase tracking-widest">Click to upload image</span>
+            </>
+          )}
+        </button>
+      )}
+      {error && <p className="text-red-400 text-[10px]">{error}</p>}
+      <input ref={inputRef} type="file" accept="image/*" onChange={handleFile} className="hidden" />
+    </div>
+  );
+}
 
 const Badge = ({ text, color = 'gold' }: { text: string; color?: 'gold' | 'green' | 'blue' }) => {
   const cls = color === 'green' ? 'bg-green-900/30 text-green-400 border-green-800/30' :
@@ -193,7 +291,7 @@ function ServicesSection() {
             <Input label="Price" value={form.price} onChange={f('price')} required />
             <Select label="Category" value={form.category} onChange={f('category')} options={categories} />
             <Input label="Duration" value={form.duration} onChange={f('duration')} />
-            <div className="md:col-span-2"><Input label="Image URL" value={form.image_url} onChange={f('image_url')} /></div>
+            <div className="md:col-span-2"><ImageUpload label="Image" value={form.image_url} onChange={f('image_url')} folder="services" /></div>
             <div className="md:col-span-2"><Textarea label="Description" value={form.description} onChange={f('description')} /></div>
             <Input label="Sort Order" type="number" value={String(form.sort_order)} onChange={f('sort_order')} />
             <div className="md:col-span-2 flex gap-3 pt-2">
@@ -303,7 +401,7 @@ function ShopSection() {
             <Input label="Name" value={form.name} onChange={f('name')} required />
             <Input label="Price" value={form.price} onChange={f('price')} required />
             <Select label="Category" value={form.category} onChange={f('category')} options={categories} />
-            <Input label="Image URL" value={form.image_url} onChange={f('image_url')} />
+            <ImageUpload label="Image" value={form.image_url} onChange={f('image_url')} folder="products" />
             <Input label="Rating (0-5)" type="number" value={form.rating} onChange={f('rating')} />
             <Input label="Reviews Count" type="number" value={form.reviews} onChange={f('reviews')} />
             <div className="md:col-span-2"><Textarea label="Description" value={form.description} onChange={f('description')} /></div>
@@ -464,7 +562,20 @@ function RateCardSection() {
 
 // ─── Locations Section ────────────────────────────────────────────────────────
 
-const EMPTY_LOCATION = { name: '', address: '', phone: '', hours: '', lat: '', lng: '', image_url: '', sort_order: '0' };
+const EMPTY_LOCATION = { name: '', address: '', phone: '', hours: '', country: '', state: '', city: '', lat: '', lng: '', image_url: '', sort_order: '0' };
+
+async function geocodeLocation(country: string, state: string, city: string): Promise<{ lat: number; lng: number } | null> {
+  const q = [city, state, country].filter(Boolean).join(', ');
+  if (!q) return null;
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1`, {
+      headers: { 'Accept-Language': 'en', 'User-Agent': 'TheBarberShopCMS/1.0' },
+    });
+    const data = await res.json();
+    if (data && data[0]) return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+  } catch (_) { /* ignore */ }
+  return null;
+}
 
 function LocationsSection() {
   const [items, setItems] = useState<Location[]>([]);
@@ -472,6 +583,7 @@ function LocationsSection() {
   const [form, setForm] = useState(EMPTY_LOCATION);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [geocoding, setGeocoding] = useState(false);
 
   const load = useCallback(async () => {
     const { data } = await supabase.from('locations').select('*').order('sort_order');
@@ -483,9 +595,25 @@ function LocationsSection() {
 
   const f = (k: keyof typeof EMPTY_LOCATION) => (v: string) => setForm((p) => ({ ...p, [k]: v }));
 
+  const handleGeocode = async () => {
+    setGeocoding(true);
+    const coords = await geocodeLocation(form.country, form.state, form.city);
+    if (coords) {
+      setForm((p) => ({ ...p, lat: String(coords.lat), lng: String(coords.lng) }));
+    } else {
+      alert('Could not find coordinates. Try a more specific location or enter manually.');
+    }
+    setGeocoding(false);
+  };
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    const payload = { name: form.name, address: form.address, phone: form.phone, hours: form.hours, lat: form.lat ? Number(form.lat) : null, lng: form.lng ? Number(form.lng) : null, image_url: form.image_url, sort_order: Number(form.sort_order) };
+    const payload = {
+      name: form.name, address: form.address, phone: form.phone, hours: form.hours,
+      country: form.country || null, state: form.state || null, city: form.city || null,
+      lat: form.lat ? Number(form.lat) : null, lng: form.lng ? Number(form.lng) : null,
+      image_url: form.image_url, sort_order: Number(form.sort_order),
+    };
     if (editing) {
       await supabase.from('locations').update(payload).eq('id', editing);
     } else {
@@ -496,7 +624,11 @@ function LocationsSection() {
 
   const handleEdit = (item: Location) => {
     setEditing(item.id);
-    setForm({ name: item.name, address: item.address || '', phone: item.phone || '', hours: item.hours || '', lat: String(item.lat || ''), lng: String(item.lng || ''), image_url: item.image_url || '', sort_order: String(item.sort_order) });
+    setForm({
+      name: item.name, address: item.address || '', phone: item.phone || '', hours: item.hours || '',
+      country: item.country || '', state: item.state || '', city: item.city || '',
+      lat: String(item.lat || ''), lng: String(item.lng || ''), image_url: item.image_url || '', sort_order: String(item.sort_order),
+    });
     setShowForm(true);
   };
 
@@ -521,11 +653,23 @@ function LocationsSection() {
           <form onSubmit={handleSave} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input label="Name" value={form.name} onChange={f('name')} required />
             <Input label="Phone" value={form.phone} onChange={f('phone')} />
-            <div className="md:col-span-2"><Input label="Address" value={form.address} onChange={f('address')} /></div>
+            <div className="md:col-span-2"><Input label="Address (Street)" value={form.address} onChange={f('address')} /></div>
+            <Input label="Country" value={form.country} onChange={f('country')} />
+            <Input label="State / Region" value={form.state} onChange={f('state')} />
+            <Input label="City" value={form.city} onChange={f('city')} />
             <Input label="Hours" value={form.hours} onChange={f('hours')} />
-            <Input label="Image URL" value={form.image_url} onChange={f('image_url')} />
-            <Input label="Latitude" type="number" value={form.lat} onChange={f('lat')} />
-            <Input label="Longitude" type="number" value={form.lng} onChange={f('lng')} />
+            {/* Geocode row */}
+            <div className="md:col-span-2 flex items-end gap-3">
+              <div className="flex-1"><Input label="Latitude (auto-filled)" value={form.lat} onChange={f('lat')} /></div>
+              <div className="flex-1"><Input label="Longitude (auto-filled)" value={form.lng} onChange={f('lng')} /></div>
+              <button type="button" onClick={handleGeocode} disabled={geocoding || (!form.country && !form.city)}
+                className={`${btn('ghost')} mb-0.5 shrink-0`}>
+                {geocoding ? <Loader2 size={12} className="animate-spin" /> : <MapPin size={12} />}
+                {geocoding ? 'Finding…' : 'Geocode'}
+              </button>
+            </div>
+            <p className="md:col-span-2 text-[10px] text-[#7f6738]">Enter Country + City then click Geocode to auto-fill coordinates, or enter manually.</p>
+            <div className="md:col-span-2"><ImageUpload label="Image" value={form.image_url} onChange={f('image_url')} folder="locations" /></div>
             <Input label="Sort Order" type="number" value={form.sort_order} onChange={f('sort_order')} />
             <div className="md:col-span-2 flex gap-3 pt-2">
               <button type="submit" className={btn('primary')}>{editing ? 'Update' : 'Create'}</button>
@@ -544,7 +688,7 @@ function LocationsSection() {
           <table className="w-full text-sm">
             <thead className="bg-[#1a160f]">
               <tr>
-                {['Name', 'Address', 'Phone', 'Hours', ''].map((h) => (
+                {['Name', 'City / Country', 'Phone', 'Hours', 'Coords', ''].map((h) => (
                   <th key={h} className="text-left px-4 py-3 text-[10px] uppercase tracking-widest text-[#7f6738] font-bold">{h}</th>
                 ))}
               </tr>
@@ -553,9 +697,10 @@ function LocationsSection() {
               {items.map((item, i) => (
                 <tr key={item.id} className={i % 2 === 0 ? 'bg-[#13110d]' : 'bg-[#111009]'}>
                   <td className="px-4 py-3 text-[#c4a15a] font-medium">{item.name}</td>
-                  <td className="px-4 py-3 text-[#a88a4e] text-xs max-w-[200px] truncate">{item.address || '—'}</td>
+                  <td className="px-4 py-3 text-[#a88a4e] text-xs">{[item.city, item.country].filter(Boolean).join(', ') || item.address || '—'}</td>
                   <td className="px-4 py-3 text-[#7f6738]">{item.phone || '—'}</td>
                   <td className="px-4 py-3 text-[#7f6738] text-xs">{item.hours || '—'}</td>
+                  <td className="px-4 py-3 text-[#7f6738] text-xs">{item.lat ? `${Number(item.lat).toFixed(2)}, ${Number(item.lng).toFixed(2)}` : '—'}</td>
                   <td className="px-4 py-3">
                     <div className="flex gap-2 justify-end">
                       <button className={btn('ghost', 'px-2 py-1')} onClick={() => handleEdit(item)}><Pencil size={12} /></button>
@@ -633,7 +778,7 @@ function GallerySection() {
           <form onSubmit={handleSave} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input label="Title" value={form.title} onChange={f('title')} />
             <Select label="Category" value={form.category} onChange={f('category')} options={categories} />
-            <div className="md:col-span-2"><Input label="Image URL *" value={form.image_url} onChange={f('image_url')} required /></div>
+            <div className="md:col-span-2"><ImageUpload label="Image *" value={form.image_url} onChange={f('image_url')} folder="gallery" /></div>
             <Input label="Sort Order" type="number" value={form.sort_order} onChange={f('sort_order')} />
             <div className="md:col-span-2 flex gap-3 pt-2">
               <button type="submit" className={btn('primary')}>{editing ? 'Update' : 'Create'}</button>
@@ -725,7 +870,13 @@ function MediaCenterSection() {
           <form onSubmit={handleSave} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input label="Title" value={form.title} onChange={f('title')} required />
             <Select label="Type" value={form.media_type} onChange={f('media_type')} options={mediaTypes} />
-            <div className="md:col-span-2"><Input label="Media URL" value={form.media_url} onChange={f('media_url')} /></div>
+            <div className="md:col-span-2">
+              {form.media_type === 'image' ? (
+                <ImageUpload label="Image" value={form.media_url} onChange={f('media_url')} folder="media" />
+              ) : (
+                <Input label="Media URL (video/article/press link)" value={form.media_url} onChange={f('media_url')} />
+              )}
+            </div>
             <div className="md:col-span-2"><Textarea label="Description" value={form.description} onChange={f('description')} rows={3} /></div>
             <div className="md:col-span-2 flex gap-3 pt-2">
               <button type="submit" className={btn('primary')}>{editing ? 'Update' : 'Create'}</button>
@@ -882,6 +1033,8 @@ function SubmissionsSection() {
   const [filter, setFilter] = useState<'all' | 'general' | 'franchise' | 'career'>('all');
   const [expanded, setExpanded] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [deleting, setDeleting] = useState(false);
 
   const load = useCallback(async () => {
     const { data } = await supabase.from('contact_submissions').select('*').order('created_at', { ascending: false });
@@ -894,22 +1047,59 @@ function SubmissionsSection() {
   const handleDelete = async (item: ContactSubmission) => {
     if (!confirmDelete(`submission from ${item.name}`)) return;
     await supabase.from('contact_submissions').delete().eq('id', item.id);
+    setSelected((prev) => { const n = new Set(prev); n.delete(item.id); return n; });
+    load();
+  };
+
+  const handleBulkDelete = async () => {
+    if (selected.size === 0) return;
+    if (!window.confirm(`Delete ${selected.size} submission(s)? This cannot be undone.`)) return;
+    setDeleting(true);
+    await supabase.from('contact_submissions').delete().in('id', Array.from(selected));
+    setSelected(new Set());
+    setDeleting(false);
     load();
   };
 
   const filtered = filter === 'all' ? items : items.filter((i) => i.type === filter);
   const typeColor = (type: string) => type === 'general' ? 'gold' : type === 'franchise' ? 'green' : 'blue';
 
+  const toggleSelect = (id: string) => setSelected((prev) => {
+    const n = new Set(prev);
+    n.has(id) ? n.delete(id) : n.add(id);
+    return n;
+  });
+
+  const allFilteredSelected = filtered.length > 0 && filtered.every((i) => selected.has(i.id));
+  const toggleSelectAll = () => {
+    if (allFilteredSelected) {
+      setSelected((prev) => { const n = new Set(prev); filtered.forEach(i => n.delete(i.id)); return n; });
+    } else {
+      setSelected((prev) => { const n = new Set(prev); filtered.forEach(i => n.add(i.id)); return n; });
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-4">
         <h2 className="text-lg font-display tracking-widest uppercase text-[#c4a15a]">Form Submissions</h2>
-        <div className="flex gap-2">
-          {(['all', 'general', 'franchise', 'career'] as const).map((t) => (
-            <button key={t} onClick={() => setFilter(t)} className={`px-3 py-1 text-[10px] uppercase tracking-widest font-bold rounded transition-colors ${filter === t ? 'bg-[#c4a15a] text-black' : 'bg-white/5 text-[#7f6738] hover:bg-white/10'}`}>
-              {t}
+        <div className="flex items-center gap-3 flex-wrap">
+          {selected.size > 0 && (
+            <button
+              onClick={handleBulkDelete}
+              disabled={deleting}
+              className={btn('danger')}
+            >
+              <Trash2 size={12} /> Delete {selected.size} Selected
             </button>
-          ))}
+          )}
+          <div className="flex gap-2">
+            {(['all', 'general', 'franchise', 'career'] as const).map((t) => (
+              <button key={t} onClick={() => setFilter(t)} className={`px-3 py-1 text-[10px] uppercase tracking-widest font-bold rounded transition-colors ${filter === t ? 'bg-[#c4a15a] text-black' : 'bg-white/5 text-[#7f6738] hover:bg-white/10'}`}>
+                {t}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -918,45 +1108,97 @@ function SubmissionsSection() {
       ) : filtered.length === 0 ? (
         <p className="text-[#7f6738] text-sm">No submissions yet.</p>
       ) : (
-        <div className="space-y-2">
-          {filtered.map((item) => (
-            <Card key={item.id} className="cursor-pointer" >
-              <div className="flex items-center justify-between gap-4" onClick={() => setExpanded(expanded === item.id ? null : item.id)}>
-                <div className="flex items-center gap-4 min-w-0">
-                  <Badge text={item.type} color={typeColor(item.type) as 'gold' | 'green' | 'blue'} />
-                  <span className="text-sm text-[#c4a15a] font-medium truncate">{item.name}</span>
-                  <span className="text-xs text-[#7f6738] hidden md:block truncate">{item.email}</span>
-                </div>
-                <div className="flex items-center gap-3 shrink-0">
-                  <span className="text-[10px] text-[#7f6738]">{new Date(item.created_at).toLocaleDateString()}</span>
-                  <button className={btn('danger', 'px-2 py-1')} onClick={(e) => { e.stopPropagation(); handleDelete(item); }}><Trash2 size={12} /></button>
-                  {expanded === item.id ? <ChevronUp size={14} className="text-[#7f6738]" /> : <ChevronDown size={14} className="text-[#7f6738]" />}
-                </div>
-              </div>
-              {expanded === item.id && (
-                <div className="mt-4 pt-4 border-t border-white/8 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
-                  {[
-                    ['Email', item.email],
-                    ['Phone', item.phone],
-                    ['Location', [item.city, item.state, item.country].filter(Boolean).join(', ')],
-                    ['Date', new Date(item.created_at).toLocaleString()],
-                  ].map(([k, v]) => (
-                    <div key={k as string}>
-                      <p className="text-[#7f6738] uppercase tracking-widest mb-1">{k}</p>
-                      <p className="text-[#a88a4e]">{v || '—'}</p>
+        <>
+          {/* Select-all bar */}
+          <div className="flex items-center gap-3 px-4 py-2 bg-[#1a160f] rounded-sm border border-white/8 text-xs text-[#7f6738]">
+            <input
+              type="checkbox"
+              checked={allFilteredSelected}
+              onChange={toggleSelectAll}
+              className="accent-[#c4a15a] w-3.5 h-3.5"
+            />
+            <span>{allFilteredSelected ? 'Deselect all' : 'Select all'} ({filtered.length})</span>
+            {selected.size > 0 && <span className="text-[#c4a15a] ml-2">{selected.size} selected</span>}
+          </div>
+
+          <div className="space-y-2">
+            {filtered.map((item) => (
+              <Card key={item.id} className={selected.has(item.id) ? 'border-[#c4a15a]/30' : ''}>
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <input
+                      type="checkbox"
+                      checked={selected.has(item.id)}
+                      onChange={() => toggleSelect(item.id)}
+                      onClick={(e) => e.stopPropagation()}
+                      className="accent-[#c4a15a] w-3.5 h-3.5 shrink-0"
+                    />
+                    <div
+                      className="flex items-center gap-4 min-w-0 cursor-pointer flex-1"
+                      onClick={() => setExpanded(expanded === item.id ? null : item.id)}
+                    >
+                      <Badge text={item.type} color={typeColor(item.type) as 'gold' | 'green' | 'blue'} />
+                      <span className="text-sm text-[#c4a15a] font-medium truncate">{item.name}</span>
+                      <span className="text-xs text-[#7f6738] hidden md:block truncate">{item.email}</span>
+                      {item.attachments && item.attachments.length > 0 && (
+                        <span className="flex items-center gap-1 text-[10px] text-[#7f6738]">
+                          <Paperclip size={10} />{item.attachments.length}
+                        </span>
+                      )}
                     </div>
-                  ))}
-                  {item.message && (
-                    <div className="col-span-2 md:col-span-4">
-                      <p className="text-[#7f6738] uppercase tracking-widest mb-1">Message</p>
-                      <p className="text-[#a88a4e] whitespace-pre-wrap">{item.message}</p>
-                    </div>
-                  )}
+                  </div>
+                  <div
+                    className="flex items-center gap-3 shrink-0 cursor-pointer"
+                    onClick={() => setExpanded(expanded === item.id ? null : item.id)}
+                  >
+                    <span className="text-[10px] text-[#7f6738]">{new Date(item.created_at).toLocaleDateString()}</span>
+                    <button className={btn('danger', 'px-2 py-1')} onClick={(e) => { e.stopPropagation(); handleDelete(item); }}><Trash2 size={12} /></button>
+                    {expanded === item.id ? <ChevronUp size={14} className="text-[#7f6738]" /> : <ChevronDown size={14} className="text-[#7f6738]" />}
+                  </div>
                 </div>
-              )}
-            </Card>
-          ))}
-        </div>
+                {expanded === item.id && (
+                  <div className="mt-4 pt-4 border-t border-white/8 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+                    {[
+                      ['Email', item.email],
+                      ['Phone', item.phone],
+                      ['Location', [item.city, item.state, item.country].filter(Boolean).join(', ')],
+                      ['Date', new Date(item.created_at).toLocaleString()],
+                    ].map(([k, v]) => (
+                      <div key={k as string}>
+                        <p className="text-[#7f6738] uppercase tracking-widest mb-1">{k}</p>
+                        <p className="text-[#a88a4e]">{v || '—'}</p>
+                      </div>
+                    ))}
+                    {item.message && (
+                      <div className="col-span-2 md:col-span-4">
+                        <p className="text-[#7f6738] uppercase tracking-widest mb-1">Message</p>
+                        <p className="text-[#a88a4e] whitespace-pre-wrap">{item.message}</p>
+                      </div>
+                    )}
+                    {item.attachments && item.attachments.length > 0 && (
+                      <div className="col-span-2 md:col-span-4">
+                        <p className="text-[#7f6738] uppercase tracking-widest mb-2 flex items-center gap-1"><Paperclip size={10} /> Attachments</p>
+                        <div className="flex flex-wrap gap-2">
+                          {item.attachments.map((url, idx) => (
+                            <a
+                              key={idx}
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[10px] text-[#c4a15a] border border-[#c4a15a]/20 px-2 py-1 rounded hover:bg-[#c4a15a]/10 transition-colors"
+                            >
+                              File {idx + 1}
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </Card>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );

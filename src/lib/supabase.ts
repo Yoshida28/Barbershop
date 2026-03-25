@@ -52,6 +52,9 @@ export interface Location {
   lat: number | null;
   lng: number | null;
   image_url: string | null;
+  country: string | null;
+  state: string | null;
+  city: string | null;
   sort_order: number;
   created_at: string;
 }
@@ -93,5 +96,6 @@ export interface ContactSubmission {
   state: string | null;
   city: string | null;
   message: string | null;
+  attachments: string[] | null;
   created_at: string;
 }

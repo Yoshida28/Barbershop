@@ -1,33 +1,39 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Clock, CalendarDays, DollarSign } from 'lucide-react';
 import { SmokeBackground } from '../components/ui/spooky-smoke-animation';
-
-// Define the services data to look up
-interface Service {
-  title: string;
-  price: string;
-  description: string;
-  category: 'Hair' | 'Beard' | 'Grooming' | 'Premium';
-  image: string;
-  duration?: string;
-}
-
-const SERVICES: Service[] = [
-  { title: "Executive Haircut", price: "$65", description: "Precision cut with hot towel finish.", category: 'Hair', image: "https://images.pexels.com/photos/1319459/pexels-photo-1319459.jpeg?auto=compress&cs=tinysrgb&w=800", duration: "45 min" },
-  { title: "Signature Beard Trim", price: "$40", description: "Sculpting and conditioning treatment.", category: 'Beard', image: "https://images.pexels.com/photos/3998429/pexels-photo-3998429.jpeg?auto=compress&cs=tinysrgb&w=800", duration: "30 min" },
-  { title: "Classic Hot Shave", price: "$50", description: "Traditional straight razor experience.", category: 'Grooming', image: "https://images.pexels.com/photos/2080006/pexels-photo-2080006.jpeg?auto=compress&cs=tinysrgb&w=800", duration: "40 min" },
-  { title: "The TheBarberShop Package", price: "$120", description: "Full hair, beard, and facial treatment.", category: 'Premium', image: "https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=800", duration: "90 min" },
-  { title: "Scalp Therapy", price: "$35", description: "Invigorating massage and deep conditioning.", category: 'Hair', image: "https://images.pexels.com/photos/2040050/pexels-photo-2040050.jpeg?auto=compress&cs=tinysrgb&w=800", duration: "30 min" },
-  { title: "Grey Blending", price: "$45", description: "Subtle, natural color integration.", category: 'Premium', image: "https://images.pexels.com/photos/1570806/pexels-photo-1570806.jpeg?auto=compress&cs=tinysrgb&w=800", duration: "45 min" },
-];
+import { supabase } from '../lib/supabase';
+import type { Service } from '../lib/supabase';
 
 export default function ServiceDetail() {
   const { id } = useParams<{ id: string }>();
+  const [service, setService] = useState<Service | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Find the service by converting title to slug
-  const service = SERVICES.find((s) => s.title.toLowerCase().replace(/\\s+/g, '-') === id);
+  useEffect(() => {
+    if (!id) return;
+    supabase
+      .from('services')
+      .select('*')
+      .eq('id', id)
+      .single()
+      .then(({ data }) => {
+        setService(data);
+        setLoading(false);
+      });
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-heading-text">
+        <div className="fixed inset-0 pointer-events-none" style={{ zIndex: -10 }}>
+          <SmokeBackground smokeColor="#262626" />
+        </div>
+        <span className="text-xs uppercase tracking-widest text-body-text">Loading…</span>
+      </div>
+    );
+  }
 
   if (!service) {
     return (
@@ -47,7 +53,6 @@ export default function ServiceDetail() {
 
   return (
     <div className="min-h-screen selection:bg-primary-bg selection:text-heading-text relative pb-24">
-      {/* Universal Background for Theme */}
       <div className="fixed inset-0 pointer-events-none" style={{ zIndex: -10 }}>
         <SmokeBackground smokeColor="#262626" />
       </div>
@@ -63,12 +68,17 @@ export default function ServiceDetail() {
             animate={{ opacity: 1, y: 0 }}
             className="aspect-[4/5] overflow-hidden rounded-sm"
           >
-            <img 
-              src={service.image} 
-              alt={service.title} 
-              className="w-full h-full object-cover grayscale opacity-80"
-              referrerPolicy="no-referrer"
-            />
+            {service.image_url ? (
+              <img 
+                src={service.image_url} 
+                alt={service.title} 
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full bg-secondary-bg flex items-center justify-center">
+                <span className="text-white/10 text-6xl font-display">{service.title[0]}</span>
+              </div>
+            )}
           </motion.div>
           
           <motion.div 

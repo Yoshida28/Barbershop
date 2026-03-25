@@ -1,111 +1,82 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Phone, Clock, Mail, ArrowRight } from 'lucide-react';
+import { MapPin, Phone, Clock, ArrowRight } from 'lucide-react';
 import { WorldMap, LocationDetail } from '../components/ui/map';
 import { SmokeBackground } from '../components/ui/spooky-smoke-animation';
 import { LocationMap } from '../components/ui/location-map';
 import { ThreeDPhotoCarousel } from '../components/ui/3d-carousel';
+import { supabase } from '../lib/supabase';
+import type { Location } from '../lib/supabase';
 
-// Extend LocationDetail for coordinates string
-interface ExtendedLocationDetail extends LocationDetail {
+const FALLBACK_GALLERY = [
+  'https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'https://images.pexels.com/photos/3998429/pexels-photo-3998429.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'https://images.pexels.com/photos/2080006/pexels-photo-2080006.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'https://images.pexels.com/photos/1319459/pexels-photo-1319459.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'https://images.pexels.com/photos/2040050/pexels-photo-2040050.jpeg?auto=compress&cs=tinysrgb&w=800',
+];
+
+interface ExtendedLocation extends Location {
   coordinates: string;
   gallery: string[];
 }
 
-const STORES: ExtendedLocationDetail[] = [
-  {
-    id: "london",
-    label: "London",
-    lat: 51.5074,
-    lng: -0.1278,
-    coordinates: "51.5074° N, 0.1278° W",
-    address: "123 Savile Row, Mayfair, London, W1S 3PR",
-    phone: "+44 (0) 20 7123 4567",
-    hours: "Mon-Sat: 9am - 8pm, Sun: 10am - 6pm",
-    image: "https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=800",
-    gallery: [
-      "https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=800",
-      "https://images.pexels.com/photos/3998429/pexels-photo-3998429.jpeg?auto=compress&cs=tinysrgb&w=800",
-      "https://images.pexels.com/photos/2080006/pexels-photo-2080006.jpeg?auto=compress&cs=tinysrgb&w=800",
-      "https://images.pexels.com/photos/1319459/pexels-photo-1319459.jpeg?auto=compress&cs=tinysrgb&w=800",
-      "https://images.pexels.com/photos/2040050/pexels-photo-2040050.jpeg?auto=compress&cs=tinysrgb&w=800"
-    ]
-  },
-  {
-    id: "new-york",
-    label: "New York",
-    lat: 40.7128,
-    lng: -74.0060,
-    coordinates: "40.7128° N, 74.0060° W",
-    address: "West 12th Street, West Village, NY 10014",
-    phone: "+1 212-555-0199",
-    hours: "Mon-Sun: 8am - 9pm",
-    image: "https://images.pexels.com/photos/3389531/pexels-photo-3389531.jpeg?auto=compress&cs=tinysrgb&w=800",
-    gallery: [
-      "https://images.pexels.com/photos/3389531/pexels-photo-3389531.jpeg?auto=compress&cs=tinysrgb&w=800",
-      "https://images.pexels.com/photos/1570806/pexels-photo-1570806.jpeg?auto=compress&cs=tinysrgb&w=800",
-      "https://images.pexels.com/photos/4587635/pexels-photo-4587635.jpeg?auto=compress&cs=tinysrgb&w=800",
-      "https://images.pexels.com/photos/1319459/pexels-photo-1319459.jpeg?auto=compress&cs=tinysrgb&w=800",
-      "https://images.pexels.com/photos/3998429/pexels-photo-3998429.jpeg?auto=compress&cs=tinysrgb&w=800"
-    ]
-  },
-  {
-    id: "tokyo",
-    label: "Tokyo",
-    lat: 35.6762,
-    lng: 139.6503,
-    coordinates: "35.6762° N, 139.6503° E",
-    address: "Ginza 6-chome, Chuo City, Tokyo 104-0061",
-    phone: "+81 3-5555-0199",
-    hours: "Mon-Sun: 10am - 9pm",
-    image: "https://images.pexels.com/photos/3998429/pexels-photo-3998429.jpeg?auto=compress&cs=tinysrgb&w=800",
-    gallery: [
-      "https://images.pexels.com/photos/3998429/pexels-photo-3998429.jpeg?auto=compress&cs=tinysrgb&w=800",
-      "https://images.pexels.com/photos/1570806/pexels-photo-1570806.jpeg?auto=compress&cs=tinysrgb&w=800",
-      "https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=800",
-      "https://images.pexels.com/photos/2080006/pexels-photo-2080006.jpeg?auto=compress&cs=tinysrgb&w=800",
-      "https://images.pexels.com/photos/4465121/pexels-photo-4465121.jpeg?auto=compress&cs=tinysrgb&w=800"
-    ]
-  },
-  {
-    id: "dubai",
-    label: "Dubai",
-    lat: 25.2048,
-    lng: 55.2708,
-    coordinates: "25.2048° N, 55.2708° E",
-    address: "Financial Center Rd, Downtown Dubai",
-    phone: "+971 4 555 0199",
-    hours: "Mon-Sun: 10am - 10pm",
-    image: "https://images.pexels.com/photos/2080006/pexels-photo-2080006.jpeg?auto=compress&cs=tinysrgb&w=800",
-    gallery: [
-      "https://images.pexels.com/photos/2080006/pexels-photo-2080006.jpeg?auto=compress&cs=tinysrgb&w=800",
-      "https://images.pexels.com/photos/4587635/pexels-photo-4587635.jpeg?auto=compress&cs=tinysrgb&w=800",
-      "https://images.pexels.com/photos/1319459/pexels-photo-1319459.jpeg?auto=compress&cs=tinysrgb&w=800",
-      "https://images.pexels.com/photos/3998429/pexels-photo-3998429.jpeg?auto=compress&cs=tinysrgb&w=800",
-      "https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=800"
-    ]
-  }
-];
+function toExtended(loc: Location): ExtendedLocation {
+  const lat = loc.lat ?? 0;
+  const lng = loc.lng ?? 0;
+  const latDir = lat >= 0 ? 'N' : 'S';
+  const lngDir = lng >= 0 ? 'E' : 'W';
+  const coordinates = `${Math.abs(lat).toFixed(4)}° ${latDir}, ${Math.abs(lng).toFixed(4)}° ${lngDir}`;
+  const gallery = loc.image_url ? [loc.image_url, ...FALLBACK_GALLERY.slice(0, 4)] : FALLBACK_GALLERY;
+  return { ...loc, coordinates, gallery };
+}
 
-// Generate flight paths
-const FLIGHT_PATHS = [
-  { start: STORES[0], end: STORES[1] },
-  { start: STORES[1], end: STORES[0] },
-  { start: STORES[0], end: STORES[3] },
-  { start: STORES[3], end: STORES[2] },
-];
+function toLocationDetail(loc: Location): LocationDetail {
+  return {
+    id: loc.id,
+    label: loc.name,
+    lat: loc.lat ?? 0,
+    lng: loc.lng ?? 0,
+    address: loc.address ?? undefined,
+    phone: loc.phone ?? undefined,
+    hours: loc.hours ?? undefined,
+    image: loc.image_url ?? undefined,
+  };
+}
 
 export default function Locations() {
-  const [selectedStore, setSelectedStore] = useState<ExtendedLocationDetail | null>(STORES[0]);
+  const [locations, setLocations] = useState<ExtendedLocation[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<ExtendedLocation | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabase
+      .from('locations')
+      .select('*')
+      .order('sort_order')
+      .then(({ data }) => {
+        const extended = (data || []).map(toExtended);
+        setLocations(extended);
+        if (extended.length > 0) setSelectedLocation(extended[0]);
+        setLoading(false);
+      });
+  }, []);
+
+  // Generate flight path dots between consecutive location pairs
+  const flightPaths = locations.length >= 2
+    ? locations.slice(0, -1).map((loc, i) => ({
+        start: toLocationDetail(loc),
+        end: toLocationDetail(locations[i + 1]),
+      }))
+    : [];
 
   const handleLocationClick = (location: LocationDetail) => {
-    const fullStore = STORES.find(s => s.id === location.id);
-    if(fullStore) setSelectedStore(fullStore);
+    const found = locations.find(l => l.id === location.id);
+    if (found) setSelectedLocation(found);
   };
 
   return (
     <div className="min-h-screen selection:bg-primary-bg selection:text-heading-text relative bg-primary-bg-bg font-sans pb-24">
-      {/* Universal Background */}
       <div className="fixed inset-0 pointer-events-none" style={{ zIndex: -10 }}>
         <SmokeBackground smokeColor="#1a1a1a" />
       </div>
@@ -121,87 +92,130 @@ export default function Locations() {
           </p>
         </div>
 
-        {/* The World Map */}
-        <div className="mb-16 rounded-sm border border-white/10 shadow-lg p-4 bg-black/40 backdrop-blur-md relative">
-          <WorldMap
-            dots={FLIGHT_PATHS}
-            lineColor="#ffffff" 
-            onLocationClick={handleLocationClick}
-          />
-
-          {/* Location Map Overlay */}
-          <div className="absolute top-8 right-8 z-20 hidden lg:block">
-            <AnimatePresence mode="wait">
-              {selectedStore && (
-                <motion.div
-                  key={selectedStore.id}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                >
-                  <LocationMap 
-                    location={selectedStore.label} 
-                    coordinates={selectedStore.coordinates} 
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
+        {loading ? (
+          <div className="flex items-center justify-center py-32">
+            <p className="text-muted-text text-xs uppercase tracking-widest">Loading locations…</p>
           </div>
-        </div>
+        ) : locations.length === 0 ? (
+          <div className="flex items-center justify-center py-32">
+            <p className="text-muted-text text-xs uppercase tracking-widest">No locations found. Add locations via the admin panel.</p>
+          </div>
+        ) : (
+          <>
+            {/* World Map */}
+            <div className="mb-16 rounded-sm border border-white/10 shadow-lg p-4 bg-black/40 backdrop-blur-md relative">
+              <WorldMap
+                dots={flightPaths}
+                lineColor="#ffffff"
+                onLocationClick={handleLocationClick}
+              />
 
-        {/* Selected Store Details */}
-        <div className="relative border border-white/10 rounded-sm bg-black/60 backdrop-blur-xl overflow-hidden min-h-[400px]">
-          <AnimatePresence mode="wait">
-            {selectedStore && (
-              <motion.div
-                key={selectedStore.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4 }}
-                className="grid md:grid-cols-2 h-full"
-              >
-                <div className="p-12 flex flex-col justify-center">
-                  <div className="flex items-center gap-4 mb-4">
-                    <span className="p-3 bg-white/5 rounded-full"><MapPin size={24} className="text-heading-text" /></span>
-                    <h2 className="text-4xl font-display uppercase text-heading-text">{selectedStore.label}</h2>
-                  </div>
-                  
-                  <div className="space-y-8 mt-8 border-l border-white/10 pl-6">
-                    <div>
-                      <h4 className="text-xs uppercase tracking-widest text-muted-text font-bold mb-2">Address</h4>
-                      <p className="text-lg font-light text-body-text">{selectedStore.address}</p>
-                    </div>
-                    <div>
-                      <h4 className="text-xs uppercase tracking-widest text-muted-text font-bold mb-2 flex items-center gap-2"><Clock size={14}/> Hours</h4>
-                      <p className="text-lg font-light text-body-text">{selectedStore.hours}</p>
-                    </div>
-                    <div>
-                      <h4 className="text-xs uppercase tracking-widest text-muted-text font-bold mb-2 flex items-center gap-2"><Phone size={14}/> Contact</h4>
-                      <p className="text-lg font-light text-body-text">{selectedStore.phone}</p>
-                    </div>
-                  </div>
-
-                  <button className="mt-12 bg-white text-black px-8 py-4 text-xs uppercase font-bold tracking-[0.2em] hover:bg-neutral-300 transition-colors inline-flex items-center justify-center gap-4 w-fit">
-                    Book Appointment <ArrowRight size={16} />
-                  </button>
-                </div>
-                
-                <div className="relative hidden md:flex items-center justify-center bg-black/40 border-l border-white/5 py-8">
-                  <div className="w-full">
-                    <ThreeDPhotoCarousel cards={selectedStore.gallery} />
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {!selectedStore && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <p className="text-sm uppercase tracking-widest text-muted-text">Select a location on the map.</p>
+              {/* Location Map Overlay */}
+              <div className="absolute top-8 right-8 z-20 hidden lg:block">
+                <AnimatePresence mode="wait">
+                  {selectedLocation && (
+                    <motion.div
+                      key={selectedLocation.id}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                    >
+                      <LocationMap
+                        location={selectedLocation.name}
+                        coordinates={selectedLocation.coordinates}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
-          )}
-        </div>
+
+            {/* Location Tabs */}
+            <div className="flex flex-wrap gap-3 justify-center mb-8">
+              {locations.map((loc) => (
+                <button
+                  key={loc.id}
+                  onClick={() => setSelectedLocation(loc)}
+                  className={`px-5 py-2 text-xs uppercase tracking-widest font-bold rounded-full transition-all ${
+                    selectedLocation?.id === loc.id
+                      ? 'bg-white text-black'
+                      : 'bg-white/5 text-body-text hover:bg-white/10'
+                  }`}
+                >
+                  {loc.name}
+                </button>
+              ))}
+            </div>
+
+            {/* Selected Location Details */}
+            <div className="relative border border-white/10 rounded-sm bg-black/60 backdrop-blur-xl overflow-hidden min-h-[400px]">
+              <AnimatePresence mode="wait">
+                {selectedLocation && (
+                  <motion.div
+                    key={selectedLocation.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.4 }}
+                    className="grid md:grid-cols-2 h-full"
+                  >
+                    <div className="p-12 flex flex-col justify-center">
+                      <div className="flex items-center gap-4 mb-4">
+                        <span className="p-3 bg-white/5 rounded-full"><MapPin size={24} className="text-heading-text" /></span>
+                        <h2 className="text-4xl font-display uppercase text-heading-text">{selectedLocation.name}</h2>
+                      </div>
+
+                      <div className="space-y-8 mt-8 border-l border-white/10 pl-6">
+                        {selectedLocation.address && (
+                          <div>
+                            <h4 className="text-xs uppercase tracking-widest text-muted-text font-bold mb-2">Address</h4>
+                            <p className="text-lg font-light text-body-text">{selectedLocation.address}</p>
+                          </div>
+                        )}
+                        {(selectedLocation.country || selectedLocation.state || selectedLocation.city) && (
+                          <div>
+                            <h4 className="text-xs uppercase tracking-widest text-muted-text font-bold mb-2">Location</h4>
+                            <p className="text-lg font-light text-body-text">
+                              {[selectedLocation.city, selectedLocation.state, selectedLocation.country].filter(Boolean).join(', ')}
+                            </p>
+                          </div>
+                        )}
+                        {selectedLocation.hours && (
+                          <div>
+                            <h4 className="text-xs uppercase tracking-widest text-muted-text font-bold mb-2 flex items-center gap-2"><Clock size={14} /> Hours</h4>
+                            <p className="text-lg font-light text-body-text">{selectedLocation.hours}</p>
+                          </div>
+                        )}
+                        {selectedLocation.phone && (
+                          <div>
+                            <h4 className="text-xs uppercase tracking-widest text-muted-text font-bold mb-2 flex items-center gap-2"><Phone size={14} /> Contact</h4>
+                            <p className="text-lg font-light text-body-text">{selectedLocation.phone}</p>
+                          </div>
+                        )}
+                      </div>
+
+                      <button className="mt-12 bg-white text-black px-8 py-4 text-xs uppercase font-bold tracking-[0.2em] hover:bg-neutral-300 transition-colors inline-flex items-center justify-center gap-4 w-fit">
+                        Book Appointment <ArrowRight size={16} />
+                      </button>
+                    </div>
+
+                    <div className="relative hidden md:flex items-center justify-center bg-black/40 border-l border-white/5 py-8">
+                      <div className="w-full">
+                        <ThreeDPhotoCarousel cards={selectedLocation.gallery} />
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {!selectedLocation && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <p className="text-sm uppercase tracking-widest text-muted-text">Select a location on the map.</p>
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

@@ -1,8 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Phone, Mail, ArrowRight, CheckCircle } from 'lucide-react';
+import { MapPin, Phone, Mail, ArrowRight, CheckCircle, Paperclip, X as XIcon } from 'lucide-react';
 import { useLocationAPI } from '../hooks/use-location-api';
 import { supabase } from '../lib/supabase';
+
+const MAX_FILES = 5;
+const MAX_SIZE_MB = 5;
+
+async function uploadAttachments(files: File[]): Promise<string[]> {
+  const urls: string[] = [];
+  for (const file of files) {
+    const path = `submissions/${crypto.randomUUID()}-${file.name}`;
+    const { error } = await supabase.storage.from('attachments').upload(path, file, { upsert: false });
+    if (!error) {
+      const { data } = supabase.storage.from('attachments').getPublicUrl(path);
+      urls.push(data.publicUrl);
+    }
+  }
+  return urls;
+}
 
 const SectionHeading = ({ title, subtitle }: { title: string; subtitle?: string }) => (
   <div className="mb-20 text-center md:text-left w-full">
@@ -93,9 +109,12 @@ export default function Contact() {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [message, setMessage] = useState('');
+  const [attachments, setAttachments] = useState<File[]>([]);
+  const [attachError, setAttachError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
     countries, states, cities,
@@ -105,16 +124,31 @@ export default function Contact() {
     selectedCity, setSelectedCity,
   } = useLocationAPI();
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAttachError('');
+    const selected = Array.from(e.target.files || []);
+    const combined = [...attachments, ...selected];
+    if (combined.length > MAX_FILES) { setAttachError(`Max ${MAX_FILES} files allowed.`); return; }
+    const oversized = selected.find(f => f.size > MAX_SIZE_MB * 1024 * 1024);
+    if (oversized) { setAttachError(`Each file must be under ${MAX_SIZE_MB}MB.`); return; }
+    setAttachments(combined.slice(0, MAX_FILES));
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const removeFile = (idx: number) => setAttachments(prev => prev.filter((_, i) => i !== idx));
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
     setError('');
+    const attachmentUrls = attachments.length > 0 ? await uploadAttachments(attachments) : [];
     const { error: err } = await supabase.from('contact_submissions').insert({
       type: 'general',
       name, email, phone, message,
       country: selectedCountry || null,
       state: selectedState || null,
       city: selectedCity || null,
+      attachments: attachmentUrls.length > 0 ? attachmentUrls : null,
     });
     setSubmitting(false);
     if (err) { setError('Something went wrong. Please try again.'); return; }
@@ -187,6 +221,28 @@ export default function Contact() {
                   <FloatingSelect label="City" id="city" options={cities} value={selectedCity} onChange={setSelectedCity} isLoading={loadingCities} disabled={!selectedState} />
                 </div>
                 <FloatingTextarea label="Message" id="message" value={message} onChange={setMessage} />
+                {/* Attachments */}
+                <div className="pb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs uppercase tracking-widest font-bold text-body-text">Attachments (max {MAX_FILES}, {MAX_SIZE_MB}MB each)</span>
+                    <button type="button" onClick={() => fileInputRef.current?.click()} disabled={attachments.length >= MAX_FILES}
+                      className="flex items-center gap-1 text-xs uppercase tracking-widest font-bold text-heading-text border border-white/20 px-3 py-1.5 hover:bg-white/5 transition-colors disabled:opacity-40">
+                      <Paperclip size={12} /> Attach
+                    </button>
+                  </div>
+                  <input ref={fileInputRef} type="file" multiple className="hidden" onChange={handleFileChange} />
+                  {attachments.length > 0 && (
+                    <ul className="space-y-1 mt-2">
+                      {attachments.map((f, i) => (
+                        <li key={i} className="flex items-center justify-between text-xs text-body-text bg-white/5 px-3 py-1.5 rounded">
+                          <span className="truncate max-w-[200px]">{f.name}</span>
+                          <button type="button" onClick={() => removeFile(i)} className="ml-2 text-muted-text hover:text-heading-text"><XIcon size={12} /></button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {attachError && <p className="text-red-400 text-xs mt-1">{attachError}</p>}
+                </div>
                 {error && <p className="text-red-400 text-sm">{error}</p>}
                 <button
                   type="submit"
