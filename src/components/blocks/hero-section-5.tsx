@@ -80,37 +80,35 @@ export function HeroSection() {
     return (
         <>
             <main className="overflow-x-hidden pt-20">
-                <section>
-                    <div className="py-24 md:pb-32 lg:pb-36 lg:pt-32">
-                        <div className="relative z-10 mx-auto flex max-w-7xl flex-col px-6 lg:block lg:px-12">
-                            <div className="mx-auto max-w-lg text-center lg:ml-0 lg:max-w-full lg:text-left">
-                                <h1 className="mt-8 max-w-3xl text-balance text-5xl md:text-6xl lg:mt-16 xl:text-7xl font-display uppercase tracking-widest text-heading-text">
-                                    <div className="relative h-[2.5em] md:h-[2em] w-full flex items-center justify-center lg:justify-start">
-                                        <AnimatePresence mode="popLayout">
-                                            <motion.span
-                                                key={index}
-                                                initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
-                                                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                                                exit={{ opacity: 0, y: -20, filter: "blur(4px)" }}
-                                                transition={{ duration: 0.6, ease: "easeInOut" }}
-                                                className="absolute w-full"
-                                            >
-                                                {PHRASES[index]}
-                                            </motion.span>
-                                        </AnimatePresence>
-                                    </div>
-                                    <span className="block mt-2">
-                                        <span className="text-white italic">Barbershop</span>
-                                    </span>
-                                </h1>
-
-                                <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row lg:justify-start">
-                                    
+                <section className="relative">
+                    {/* Outer wrapper occupies full height minus navbar */}
+                    <div className="relative min-h-[75vw] md:min-h-0 md:aspect-video lg:min-h-[85vh]">
+                        {/* Text — pinned to bottom-left */}
+                        <div className="absolute bottom-0 left-0 z-10 p-5 md:p-10 lg:p-14">
+                            <h1 className="max-w-[90vw] md:max-w-3xl text-balance text-3xl sm:text-5xl md:text-6xl xl:text-7xl font-display uppercase tracking-widest text-heading-text">
+                                <div className="relative h-[2.5em] md:h-[2em] w-full flex items-center justify-start">
+                                    <AnimatePresence mode="popLayout">
+                                        <motion.span
+                                            key={index}
+                                            initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
+                                            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                                            exit={{ opacity: 0, y: -20, filter: "blur(4px)" }}
+                                            transition={{ duration: 0.6, ease: "easeInOut" }}
+                                            className="absolute w-full"
+                                        >
+                                            {PHRASES[index]}
+                                        </motion.span>
+                                    </AnimatePresence>
                                 </div>
-                            </div>
+                                <span className="block mt-2">
+                                    <span className="text-white italic">Barbershop</span>
+                                </span>
+                            </h1>
                         </div>
-                        <div className="aspect-[4/5] absolute inset-1 overflow-hidden rounded-3xl border border-white/10 md:aspect-video lg:rounded-[3rem] top-32 -z-10 bg-black">
-                            {/* Loading spinner — shown until video is ready to play */}
+
+                        {/* Video background container — fills parent */}
+                        <div className="absolute inset-0 overflow-hidden rounded-2xl md:rounded-[2rem] bg-black">
+                            {/* Loading spinner */}
                             <AnimatePresence>
                                 {!videoLoaded && (
                                     <motion.div
@@ -141,13 +139,16 @@ export function HeroSection() {
                                 aria-label="Barbershop cinematic background"
                                 src="/herovideo.mp4"
                             />
-                            {/* Vignette + directional gradient keep hero copy readable */}
-                            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(0,0,0,0.55)_100%)]"></div>
-                            <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent"></div>
+                            {/* Vignette — desktop only */}
+                            <div className="hidden md:block absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(0,0,0,0.55)_100%)]"></div>
+                            <div className="hidden md:block absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent"></div>
+                            {/* Subtle bottom gradient to help text readability on mobile */}
+                            <div className="md:hidden absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent"></div>
                         </div>
                     </div>
                 </section>
-                <section className="bg-background pb-4 pt-4 md:pb-6 border-t border-white/5 relative z-10 overflow-hidden">
+                <section className="bg-background pb-2 pt-2 md:pb-6 border-t border-white/5 relative z-10 overflow-hidden">
+
                     <div className="group relative m-auto max-w-7xl px-6">
                         <div className="flex flex-col items-center md:flex-row gap-6">
                             <div className="md:min-w-[14rem] md:max-w-[14rem] md:border-r border-white/10 md:pr-8 whitespace-nowrap shrink-0">

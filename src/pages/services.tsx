@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Scissors, Award, Star, ArrowRight } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import type { Service, RateCardItem } from '../lib/supabase';
+import { Loader } from '../components/ui/loader';
 
 const SectionHeading = ({ title, subtitle }: { title: string; subtitle?: string }) => (
   <div className="mb-20 text-center md:text-left">
@@ -73,7 +74,7 @@ export default function Services() {
           <AnimatePresence>
             {loadingServices ? (
               <div className="col-span-full py-20 text-center">
-                <p className="text-muted-text text-xs uppercase tracking-widest">Loading services…</p>
+                <Loader />
               </div>
             ) : filteredServices.length === 0 ? (
               <div className="col-span-full py-20 text-center">

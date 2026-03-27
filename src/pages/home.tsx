@@ -13,6 +13,7 @@ import { LocationSelectors } from '../components/ui/location-selectors';
 import { supabase } from '../lib/supabase';
 import type { Service, Product, RateCardItem, GalleryItem, MediaItem, FranchiseInfo } from '../lib/supabase';
 import { FeatureSteps } from '../components/ui/feature-section';
+import { Loader } from '../components/ui/loader';
 
 
 // --- Components ---
@@ -20,7 +21,7 @@ import { FeatureSteps } from '../components/ui/feature-section';
 const SectionHeading = ({ title, subtitle }: { title: string; subtitle?: string }) => (
   <div className="mb-16">
     {subtitle && <p className="text-xs uppercase tracking-[0.4em] text-muted-text mb-4">{subtitle}</p>}
-    <h2 className="text-5xl md:text-7xl leading-none font-display uppercase">{title}</h2>
+    <h2 className="text-4xl md:text-7xl leading-none font-display uppercase">{title}</h2>
   </div>
 );
 
@@ -103,10 +104,12 @@ const AboutVisionMission = () => (
 const Services = () => {
   const [services, setServices] = useState<Service[]>([]);
   const [activeCategory, setActiveCategory] = useState('All');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     supabase.from('services').select('*').order('sort_order').then(({ data }) => {
       setServices(data || []);
+      setLoading(false);
     });
   }, []);
 
@@ -133,7 +136,11 @@ const Services = () => {
           ))}
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filtered.length > 0 ? (
+          {loading ? (
+            <div className="col-span-full py-20 text-center">
+              <Loader />
+            </div>
+          ) : filtered.length > 0 ? (
             filtered.map((service, idx) => (
               <Link to={`/services/${service.id}`} key={service.id} className="block">
                 <motion.div
@@ -176,10 +183,12 @@ const Services = () => {
 
 const ProductsMerch = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     supabase.from('products').select('*').order('sort_order').then(({ data }) => {
       setProducts(data || []);
+      setLoading(false);
     });
   }, []);
 
@@ -215,7 +224,9 @@ const ProductsMerch = () => {
           <div>
             <SectionHeading title="Apothecary" subtitle="Premium Products" />
             <div className="grid grid-cols-1 gap-8 md:gap-12">
-              {apothecary.length > 0 ? apothecary.map(p => <ProductRow key={p.id} item={p} />) : (
+              {loading ? (
+                <div className="py-8"><Loader /></div>
+              ) : apothecary.length > 0 ? apothecary.map(p => <ProductRow key={p.id} item={p} />) : (
                 <p className="text-muted-text text-xs uppercase tracking-widest py-8">Our apothecary is currently being restocked.</p>
               )}
             </div>
@@ -223,7 +234,9 @@ const ProductsMerch = () => {
           <div>
             <SectionHeading title="Dry Goods" subtitle="Merchandise" />
             <div className="grid grid-cols-1 gap-8 md:gap-12">
-              {merchandise.length > 0 ? merchandise.map(p => <ProductRow key={p.id} item={p} />) : (
+              {loading ? (
+                <div className="py-8"><Loader /></div>
+              ) : merchandise.length > 0 ? merchandise.map(p => <ProductRow key={p.id} item={p} />) : (
                 <p className="text-muted-text text-xs uppercase tracking-widest py-8">Merchandise is currently unavailable.</p>
               )}
             </div>
@@ -236,10 +249,12 @@ const ProductsMerch = () => {
 
 const RateCard = () => {
   const [rateItems, setRateItems] = useState<RateCardItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     supabase.from('rate_card').select('*').order('sort_order').then(({ data }) => {
       setRateItems(data || []);
+      setLoading(false);
     });
   }, []);
 
@@ -256,10 +271,12 @@ const RateCard = () => {
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12 md:mb-16">
           <p className="text-xs uppercase tracking-[0.4em] text-body-text mb-4">Investment</p>
-          <h2 className="text-5xl md:text-8xl font-display uppercase">Rate Card</h2>
+          <h2 className="text-4xl sm:text-5xl md:text-8xl font-display uppercase">Rate Card</h2>
         </div>
         <div className="space-y-8">
-          {Object.entries(groups).map(([cat, items]) => (
+          {loading ? (
+            <div className="py-12"><Loader size="large" /></div>
+          ) : Object.entries(groups).map(([cat, items]) => (
             <div key={cat} className="space-y-4">
               <h5 className="text-xs uppercase tracking-widest text-body-text border-b border-white/10 border-solid pb-2">{cat}</h5>
               {items.map((item) => (
@@ -311,10 +328,13 @@ const Gallery = () => {
   const [flashing, setFlashing] = useState(false);
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     supabase.from('gallery_items').select('image_url').order('sort_order').limit(12).then(({ data }) => {
       const urls = (data || []).map((g: GalleryItem) => g.image_url).filter(Boolean);
       setGalleryImages(urls.length > 0 ? urls : FALLBACK_GALLERY);
+      setLoading(false);
     });
   }, []);
 
@@ -326,19 +346,24 @@ const Gallery = () => {
   return (
     <section id="gallery" className="bg-[#0b0a08] relative">
       <GalleryFlash active={flashing} />
-      <ImageAutoSlider
-        images={galleryImages.length > 0 ? galleryImages : FALLBACK_GALLERY}
-        title="The Archive"
-        subtitle="Visuals"
-        speed={38}
-        onImageClick={handleGalleryNav}
-      />
+      {loading ? (
+        <div className="py-32"><Loader size="large" /></div>
+      ) : (
+        <ImageAutoSlider
+          images={galleryImages.length > 0 ? galleryImages : FALLBACK_GALLERY}
+          title="The Archive"
+          subtitle="Visuals"
+          speed={38}
+          onImageClick={handleGalleryNav}
+        />
+      )}
     </section>
   );
 };
 
 const MediaCenter = () => {
   const [features, setFeatures] = useState<{ step: string; title: string; content: string; image: string }[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     supabase.from('media_items').select('*').order('published_at', { ascending: false }).limit(3).then(({ data }) => {
@@ -352,8 +377,17 @@ const MediaCenter = () => {
         { step: 'Oct 12, 2025', title: 'New London Flagship', content: 'TheBarberShop opens its most ambitious location yet on Savile Row.', image: 'https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=1200' },
         { step: 'Sep 05, 2025', title: 'The Evolution of Craft', content: 'A deep dive into how our master barbers evolve centuries-old techniques.', image: 'https://images.pexels.com/photos/3998429/pexels-photo-3998429.jpeg?auto=compress&cs=tinysrgb&w=1200' },
       ]);
+      setLoading(false);
     });
   }, []);
+
+  if (loading) {
+    return (
+      <section className="py-24 bg-secondary-bg">
+        <Loader size="large" />
+      </section>
+    );
+  }
 
   if (features.length === 0) return null;
 
@@ -393,10 +427,12 @@ const ContactSection = () => {
   const [attachError, setAttachError] = useState('');
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [loadingStats, setLoadingStats] = useState(true);
 
   useEffect(() => {
     supabase.from('franchise_info').select('*').order('sort_order').then(({ data }) => {
       setFranchiseStats(data || []);
+      setLoadingStats(false);
     });
   }, []);
 
@@ -497,14 +533,18 @@ const ContactSection = () => {
                 <p className="text-base text-body-text leading-relaxed mb-8 font-sans">
                   We are looking for partners who share our passion for excellence and tradition. Bring the TheBarberShop experience to your city.
                 </p>
-                <div className="grid grid-cols-2 gap-x-8 gap-y-6">
-                  {franchiseStats.map((item) => (
-                    <div key={item.key} className="border-l-2 border-primary pl-4">
-                      <p className="text-xs uppercase tracking-widest text-muted-text mb-1">{item.label}</p>
-                      <p className="text-lg md:text-xl font-display uppercase">{item.value}</p>
-                    </div>
-                  ))}
-                </div>
+                {loadingStats ? (
+                  <div className="py-4"><Loader /></div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-x-8 gap-y-6">
+                    {franchiseStats.map((item) => (
+                      <div key={item.key} className="border-l-2 border-primary pl-4">
+                        <p className="text-xs uppercase tracking-widest text-muted-text mb-1">{item.label}</p>
+                        <p className="text-lg md:text-xl font-display uppercase">{item.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 

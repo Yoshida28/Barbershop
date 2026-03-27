@@ -106,7 +106,7 @@ export const MinimalistHero = ({
           transition={{ duration: 0.6, delay: 1.2 }}
           className="z-20 order-3 flex items-center justify-center text-center md:justify-start"
         >
-          <h1 className="text-7xl font-extrabold text-foreground md:text-8xl lg:text-9xl">
+          <h1 className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-extrabold text-foreground">
             {overlayText.part1}
             <br />
             {overlayText.part2}

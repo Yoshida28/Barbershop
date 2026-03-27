@@ -132,7 +132,7 @@ export default function ElegantCarousel({ className }: { className?: string }) {
 
   return (
     <div
-      className={cn("relative w-full h-[600px] md:h-[800px] overflow-hidden bg-background text-foreground select-none", className)}
+      className={cn("relative w-full min-h-[800px] md:h-[800px] flex flex-col md:block overflow-hidden bg-background text-foreground select-none", className)}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}
@@ -150,7 +150,7 @@ export default function ElegantCarousel({ className }: { className?: string }) {
       <div className="relative z-10 w-full h-full max-w-7xl mx-auto flex flex-col md:flex-row items-center px-6 md:px-12">
         
         {/* Left: Text Content */}
-        <div className="w-full md:w-1/2 h-1/2 md:h-full flex flex-col justify-center order-2 md:order-1 relative z-20">
+        <div className="w-full md:w-1/2 flex-1 py-12 mb-24 md:mb-0 md:h-full flex flex-col justify-center order-2 md:order-1 relative z-20">
           <div className="max-w-md">
             
             {/* Collection number */}
@@ -169,7 +169,7 @@ export default function ElegantCarousel({ className }: { className?: string }) {
             {/* Title */}
             <h2
               className={cn(
-                "text-5xl md:text-7xl font-display uppercase tracking-widest leading-tight mb-4 transition-all duration-700 delay-100 transform text-white",
+                "text-4xl sm:text-5xl md:text-7xl font-display uppercase tracking-widest leading-tight mb-4 transition-all duration-700 delay-100 transform text-white",
                 isTransitioning ? "opacity-0 -translate-y-4" : "opacity-100 translate-y-0"
               )}
             >
@@ -218,7 +218,7 @@ export default function ElegantCarousel({ className }: { className?: string }) {
         </div>
 
         {/* Right: Image */}
-        <div className="w-full md:w-1/2 h-1/2 md:h-full flex items-center justify-center md:justify-end order-1 md:order-2 py-8 md:py-24 relative">
+        <div className="w-full md:w-1/2 h-[40vh] min-h-[350px] md:h-full flex items-center justify-center md:justify-end order-1 md:order-2 py-8 md:py-24 relative">
           <div
             className={cn(
               "relative w-full max-w-sm aspect-[3/4] overflow-hidden rounded-sm shadow-2xl transition-all duration-1000 transform",

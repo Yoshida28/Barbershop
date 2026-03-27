@@ -7,6 +7,7 @@ import { LocationMap } from '../components/ui/location-map';
 import { ThreeDPhotoCarousel } from '../components/ui/3d-carousel';
 import { supabase } from '../lib/supabase';
 import type { Location } from '../lib/supabase';
+import { Loader } from '../components/ui/loader';
 
 const FALLBACK_GALLERY = [
   'https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=800',
@@ -94,7 +95,7 @@ export default function Locations() {
 
         {loading ? (
           <div className="flex items-center justify-center py-32">
-            <p className="text-muted-text text-xs uppercase tracking-widest">Loading locations…</p>
+            <Loader />
           </div>
         ) : locations.length === 0 ? (
           <div className="flex items-center justify-center py-32">

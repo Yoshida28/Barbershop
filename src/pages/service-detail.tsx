@@ -5,6 +5,7 @@ import { ArrowLeft, Clock, CalendarDays, DollarSign } from 'lucide-react';
 import { SmokeBackground } from '../components/ui/spooky-smoke-animation';
 import { supabase } from '../lib/supabase';
 import type { Service } from '../lib/supabase';
+import { Loader } from '../components/ui/loader';
 
 export default function ServiceDetail() {
   const { id } = useParams<{ id: string }>();
@@ -30,7 +31,7 @@ export default function ServiceDetail() {
         <div className="fixed inset-0 pointer-events-none" style={{ zIndex: -10 }}>
           <SmokeBackground smokeColor="#262626" />
         </div>
-        <span className="text-xs uppercase tracking-widest text-body-text">Loading…</span>
+        <Loader size="large" />
       </div>
     );
   }

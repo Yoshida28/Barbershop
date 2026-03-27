@@ -1,142 +1,9 @@
-import React, { useState } from 'react';
-import { ShoppingBag, ArrowRight, X, Star, ShieldCheck, Truck, ChevronLeft } from 'lucide-react';
-
-interface Product {
-  name: string;
-  price: string;
-  image: string;
-  description: string;
-  category: string;
-  rating: number;
-  reviews: number;
-  details: string[];
-}
-
-const PRODUCTS: Product[] = [
-  {
-    name: "Matte Clay",
-    price: "$28",
-    image: "https://images.pexels.com/photos/4587635/pexels-photo-4587635.jpeg?auto=compress&cs=tinysrgb&w=600",
-    description: "A high-hold, zero-shine matte clay that gives you texture and control without the grease. Perfect for structured, natural-looking styles.",
-    category: "Hair Styling",
-    rating: 4.9,
-    reviews: 124,
-    details: ["Strong hold formula", "Matte finish", "Water-soluble", "No parabens or sulfates"],
-  },
-  {
-    name: "Beard Oil",
-    price: "$32",
-    image: "https://images.pexels.com/photos/672629/pexels-photo-672629.jpeg?auto=compress&cs=tinysrgb&w=600",
-    description: "Cold-pressed argan and jojoba blend that nourishes the beard and the skin beneath. Eliminates beard itch and promotes softness.",
-    category: "Beard Care",
-    rating: 4.8,
-    reviews: 98,
-    details: ["100% natural oils", "Eliminates beard itch", "Promotes growth", "Subtle cedar scent"],
-  },
-  {
-    name: "Texture Spray",
-    price: "$24",
-    image: "https://images.pexels.com/photos/4465121/pexels-photo-4465121.jpeg?auto=compress&cs=tinysrgb&w=600",
-    description: "A lightweight sea salt spray that adds volume, texture, and a lived-in look to any hair type. Works on wet or dry hair.",
-    category: "Hair Styling",
-    rating: 4.7,
-    reviews: 86,
-    details: ["Sea salt formula", "Adds natural wave", "Buildable texture", "Humidity resistant"],
-  },
-  {
-    name: "Pomade",
-    price: "$26",
-    image: "https://images.pexels.com/photos/3997381/pexels-photo-3997381.jpeg?auto=compress&cs=tinysrgb&w=600",
-    description: "Water-based pomade with a medium hold and a subtle sheen. Perfect for classic slick-back and side-part styles.",
-    category: "Hair Styling",
-    rating: 4.6,
-    reviews: 71,
-    details: ["Water-based", "Medium hold", "Easy wash-out", "No buildup"],
-  },
-  {
-    name: "Beard Balm",
-    price: "$22",
-    image: "https://images.pexels.com/photos/3993449/pexels-photo-3993449.jpeg?auto=compress&cs=tinysrgb&w=600",
-    description: "Conditioning balm with beeswax and shea butter. Tames flyaways and keeps your beard shaped all day.",
-    category: "Beard Care",
-    rating: 4.8,
-    reviews: 55,
-    details: ["Beeswax & shea butter", "Light hold", "Conditions as it styles", "Woodsy scent"],
-  },
-  {
-    name: "Scalp Tonic",
-    price: "$36",
-    image: "https://images.pexels.com/photos/4465829/pexels-photo-4465829.jpeg?auto=compress&cs=tinysrgb&w=600",
-    description: "Caffeine-infused scalp serum that stimulates follicles, reduces flakiness, and promotes a healthy scalp environment.",
-    category: "Scalp Care",
-    rating: 4.9,
-    reviews: 43,
-    details: ["Caffeine infused", "Reduces flakiness", "Promotes follicle health", "Fragrance free"],
-  },
-];
-
-const MERCHANDISE: Product[] = [
-  {
-    name: "TheBarberShop Tee",
-    price: "$45",
-    image: "https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=600",
-    description: "Premium 100% combed cotton tee bearing the TheBarberShop mark. Heavyweight construction with a relaxed, tailored fit.",
-    category: "Apparel",
-    rating: 4.9,
-    reviews: 62,
-    details: ["100% combed cotton", "280gsm heavyweight", "Relaxed fit", "Pre-shrunk"],
-  },
-  {
-    name: "Leather Apron",
-    price: "$180",
-    image: "https://images.pexels.com/photos/3389531/pexels-photo-3389531.jpeg?auto=compress&cs=tinysrgb&w=600",
-    description: "Full-grain, waxed leather apron handcrafted in the tradition of the old-world barber. An heirloom piece that only gets better with age.",
-    category: "Accessories",
-    rating: 5.0,
-    reviews: 34,
-    details: ["Full-grain waxed leather", "Handstitched edges", "Adjustable neck strap", "Lifetime guarantee"],
-  },
-  {
-    name: "Steel Comb",
-    price: "$35",
-    image: "https://images.pexels.com/photos/10153406/pexels-photo-10153406.jpeg?auto=compress&cs=tinysrgb&w=600",
-    description: "Precision-machined from a single block of stainless steel. Seamless teeth prevent snagging, anti-static finish for all hair types.",
-    category: "Tools",
-    rating: 4.8,
-    reviews: 77,
-    details: ["304 stainless steel", "Seamless teeth", "Anti-static", "Pocket size"],
-  },
-  {
-    name: "Canvas Tote",
-    price: "$55",
-    image: "https://images.pexels.com/photos/1152077/pexels-photo-1152077.jpeg?auto=compress&cs=tinysrgb&w=600",
-    description: "Heavy-duty waxed canvas tote with leather handles. Carries your daily essentials with rugged, refined style.",
-    category: "Accessories",
-    rating: 4.7,
-    reviews: 28,
-    details: ["Waxed canvas", "Leather handles", "Inner zip pocket", "Water resistant"],
-  },
-  {
-    name: "Barber Cap",
-    price: "$40",
-    image: "https://images.pexels.com/photos/1124466/pexels-photo-1124466.jpeg?auto=compress&cs=tinysrgb&w=600",
-    description: "Classic five-panel cap with a curved brim, embroidered TheBarberShop logo, and a structured crown.",
-    category: "Apparel",
-    rating: 4.6,
-    reviews: 41,
-    details: ["Structured crown", "Embroidered logo", "Adjustable strap", "One size fits most"],
-  },
-  {
-    name: "Grooming Kit",
-    price: "$95",
-    image: "https://images.pexels.com/photos/2637370/pexels-photo-2637370.jpeg?auto=compress&cs=tinysrgb&w=600",
-    description: "The complete TheBarberShop essentials kit: clay, beard oil, texture spray, and a steel comb — presented in a premium gift box.",
-    category: "Bundle",
-    rating: 5.0,
-    reviews: 19,
-    details: ["4-piece set", "Premium gift box", "Save 15%", "Free engraving"],
-  },
-];
+import React, { useState, useEffect } from 'react';
+import { ShoppingBag, ArrowRight, X, Star, ShieldCheck, ChevronLeft, Mail } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
+import type { Product } from '../lib/supabase';
+import { Loader } from '../components/ui/loader';
 
 // ─── Product Detail Modal ─────────────────────────────────────────────────────
 function ProductModal({ product, onClose }: { product: Product; onClose: () => void }) {
@@ -160,8 +27,12 @@ function ProductModal({ product, onClose }: { product: Product; onClose: () => v
         </button>
 
         <div className="flex flex-col md:flex-row">
-          <div className="w-full md:w-5/12 aspect-square md:aspect-auto md:min-h-[420px] flex-shrink-0 overflow-hidden">
-            <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+          <div className="w-full md:w-5/12 aspect-square md:aspect-auto md:min-h-[420px] flex-shrink-0 overflow-hidden bg-[#18140f] flex items-center justify-center">
+            {product.image_url ? (
+              <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+            ) : (
+              <ShoppingBag size={48} className="text-[#c4a15a]/20" />
+            )}
           </div>
 
           <div className="flex flex-col p-7 md:p-9 flex-1">
@@ -179,11 +50,11 @@ function ProductModal({ product, onClose }: { product: Product; onClose: () => v
                   <Star
                     key={i}
                     size={13}
-                    className={i < Math.round(product.rating) ? 'text-[#c4a15a] fill-[#c4a15a]' : 'text-[#7f6738]'}
+                    className={i < Math.round(product.rating || 5) ? 'text-[#c4a15a] fill-[#c4a15a]' : 'text-[#7f6738]'}
                   />
                 ))}
               </div>
-              <span className="text-xs text-[#a88a4e]">{product.rating} · {product.reviews} reviews</span>
+              <span className="text-xs text-[#a88a4e]">{product.rating || '5.0'} · {product.reviews || 0} reviews</span>
             </div>
 
             <div className="text-4xl font-mono font-bold text-[#c4a15a] mb-6">{product.price}</div>
@@ -191,7 +62,7 @@ function ProductModal({ product, onClose }: { product: Product; onClose: () => v
             <p className="text-[#a88a4e] font-light leading-relaxed mb-6 text-sm">{product.description}</p>
 
             <ul className="space-y-2 mb-8">
-              {product.details.map(d => (
+              {(product.details || []).map(d => (
                 <li key={d} className="flex items-center gap-3 text-sm text-[#a88a4e]">
                   <ShieldCheck size={13} className="text-[#c4a15a] shrink-0" />
                   {d}
@@ -200,14 +71,10 @@ function ProductModal({ product, onClose }: { product: Product; onClose: () => v
             </ul>
 
             <div className="flex flex-col sm:flex-row gap-3 mt-auto">
-              <button className="flex-1 bg-[#c4a15a] text-[#0b0a08] font-bold uppercase tracking-widest text-xs py-4 px-6 rounded-full hover:bg-[#d4b56a] active:scale-95 transition-all flex items-center justify-center gap-2">
-                <ShoppingBag size={15} />
-                Add to Cart
-              </button>
-              <button className="flex-1 border border-[#c4a15a]/40 text-[#c4a15a] font-bold uppercase tracking-widest text-xs py-4 px-6 rounded-full hover:border-[#c4a15a] active:scale-95 transition-all flex items-center justify-center gap-2">
-                <Truck size={15} />
-                Free Shipping
-              </button>
+              <Link to="/contact" className="w-full bg-[#c4a15a] text-[#0b0a08] font-bold uppercase tracking-widest text-xs py-4 px-6 rounded-full hover:bg-[#d4b56a] active:scale-95 transition-all flex items-center justify-center gap-2">
+                <Mail size={15} />
+                Contact Us
+              </Link>
             </div>
           </div>
         </div>
@@ -262,11 +129,17 @@ function ViewAllOverlay({
                     View Details
                   </div>
                 </div>
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                />
+                {item.image_url ? (
+                  <img
+                    src={item.image_url}
+                    alt={item.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <ShoppingBag size={48} className="text-[#c4a15a]/20 group-hover:scale-105 transition-transform duration-700" />
+                  </div>
+                )}
               </div>
               <div className="flex justify-between items-center px-1">
                 <div>
@@ -330,11 +203,17 @@ function ProductGrid({
                   View Details
                 </div>
               </div>
-              <img
-                src={item.image}
-                alt={item.name}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              />
+              {item.image_url ? (
+                <img
+                  src={item.image_url}
+                  alt={item.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <ShoppingBag size={48} className="text-[#c4a15a]/20 group-hover:scale-105 transition-transform duration-700" />
+                </div>
+              )}
             </div>
 
             <div className="flex justify-between items-center px-1">
@@ -372,6 +251,19 @@ function ProductGrid({
 export default function Products() {
   const [selected, setSelected] = useState<Product | null>(null);
   const [viewAllSection, setViewAllSection] = useState<{ title: string; items: Product[] } | null>(null);
+  
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabase.from('products').select('*').order('sort_order').then(({ data }) => {
+      setProducts(data || []);
+      setLoading(false);
+    });
+  }, []);
+
+  const groomingProducts = products.filter(p => !['Apparel', 'Accessories', 'Tools', 'Bundle'].includes(p.category || ''));
+  const dryGoods = products.filter(p => ['Apparel', 'Accessories', 'Tools', 'Bundle'].includes(p.category || ''));
 
   const openDetail = (p: Product) => setSelected(p);
   const closeDetail = () => setSelected(null);
@@ -404,18 +296,26 @@ export default function Products() {
         {/* Category divider */}
         <div className="w-full h-[1px] bg-gradient-to-r from-[#c4a15a]/30 via-[#c4a15a]/10 to-transparent mb-20" />
 
-        <ProductGrid
-          items={PRODUCTS}
-          title="Grooming"
-          onSelect={openDetail}
-          onViewAll={() => openViewAll('Grooming', PRODUCTS)}
-        />
-        <ProductGrid
-          items={MERCHANDISE}
-          title="Dry Goods"
-          onSelect={openDetail}
-          onViewAll={() => openViewAll('Dry Goods', MERCHANDISE)}
-        />
+        {loading ? (
+          <div className="py-20 flex justify-center">
+            <Loader size="large" />
+          </div>
+        ) : (
+          <>
+            <ProductGrid
+              items={groomingProducts}
+              title="Grooming"
+              onSelect={openDetail}
+              onViewAll={() => openViewAll('Grooming', groomingProducts)}
+            />
+            <ProductGrid
+              items={dryGoods}
+              title="Dry Goods"
+              onSelect={openDetail}
+              onViewAll={() => openViewAll('Dry Goods', dryGoods)}
+            />
+          </>
+        )}
       </div>
 
       {/* View All full-screen overlay */}

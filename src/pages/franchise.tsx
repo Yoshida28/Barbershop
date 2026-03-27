@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Building, ArrowRight, CheckCircle, Globe, TrendingUp, ShieldCheck, Paperclip, X as XIcon } from 'lucide-react';
 import { useLocationAPI } from '../hooks/use-location-api';
 import { supabase, FranchiseInfo } from '../lib/supabase';
+import { Loader } from '../components/ui/loader';
 
 const MAX_FILES = 5;
 const MAX_SIZE_MB = 5;
@@ -110,6 +111,7 @@ export default function Franchise() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
+  const [loadingStats, setLoadingStats] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
@@ -125,7 +127,10 @@ export default function Franchise() {
       .from('franchise_info')
       .select('*')
       .order('sort_order')
-      .then(({ data }) => { if (data && data.length > 0) setStats(data); });
+      .then(({ data }) => { 
+        if (data && data.length > 0) setStats(data); 
+        setLoadingStats(false);
+      });
   }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -164,19 +169,25 @@ export default function Franchise() {
       <div className="max-w-7xl mx-auto">
 
         {/* Stats Bar */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="grid grid-cols-2 md:grid-cols-5 gap-px bg-white/10 border border-white/10 rounded-sm overflow-hidden mb-16"
-        >
-          {stats.map((stat) => (
-            <div key={stat.key} className="bg-primary-bg-bg px-6 py-8 text-center flex flex-col gap-2">
-              <span className="text-2xl md:text-3xl font-display text-heading-text tracking-tight">{stat.value}</span>
-              <span className="text-[10px] uppercase tracking-[0.25em] text-muted-text font-bold">{stat.label}</span>
-            </div>
-          ))}
-        </motion.div>
+        {loadingStats ? (
+          <div className="py-12 mb-16 bg-white/5 border border-white/10 rounded-sm">
+            <Loader size="large" />
+          </div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="grid grid-cols-2 md:grid-cols-5 gap-px bg-white/10 border border-white/10 rounded-sm overflow-hidden mb-16"
+          >
+            {stats.map((stat) => (
+              <div key={stat.key} className="bg-primary-bg-bg px-6 py-8 text-center flex flex-col gap-2">
+                <span className="text-2xl md:text-3xl font-display text-heading-text tracking-tight">{stat.value}</span>
+                <span className="text-[10px] uppercase tracking-[0.25em] text-muted-text font-bold">{stat.label}</span>
+              </div>
+            ))}
+          </motion.div>
+        )}
 
         {/* Main Card */}
         <motion.div
